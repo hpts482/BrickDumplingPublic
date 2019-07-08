@@ -11,7 +11,7 @@ cc.Class({
 
         this.score = 0;
         this.bricksNumber = 50;
-        this.readJsonTest();
+        this.readJsonTest(self);
     },
 
     addScore(score){
@@ -22,7 +22,7 @@ cc.Class({
         this.bricksNumber -= n;
     },
     
-    readJsonTest(){
+    readJsonTest(self){
         cc.loader.loadRes('test',function(err,obj){
             if(err){
                 console.log(err);
