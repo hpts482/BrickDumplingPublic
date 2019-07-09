@@ -53,14 +53,17 @@ cc.Class({
 
     init() {
         this.physicsManager.enabled = true;
+        this.gameModel.readJson(this);
+    },
+    initAfter(){
+        console.log('Afterlog');
         this.gameModel.init();
 
         this.gameView.init(this);
         this.ball.init(this);
         this.paddle.init();
-        this.brickLayout.init(this.gameModel.bricksNumber);
+        this.brickLayout.init(this.gameModel.bricksNumber,this.gameModel.currentStage);
         this.overPanel.init(this);
-
     },
 
     startGame() {
@@ -78,6 +81,9 @@ cc.Class({
     stopGame() {
         this.physicsManager.enabled = false;
         this.overPanel.show(this.gameModel.score, this.gameModel.bricksNumber === 0);
+    },
+    nextStage(){
+        this.brickLayout.init(this.gameModel.bricksNumber,this.gameModel.currentStage);
     },
 
     onBallContactBrick(ballNode, brickNode) {

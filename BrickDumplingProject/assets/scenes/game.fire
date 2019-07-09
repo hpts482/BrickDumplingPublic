@@ -47,8 +47,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.44691485522888336,
-      "y": 0.44691485522888336,
+      "x": 0.3688038793103448,
+      "y": 0.3688038793103448,
       "z": 1
     },
     "_quat": {
@@ -1235,7 +1235,7 @@
     "brickPrefab": {
       "__uuid__": "edbd9d67-e2ab-4be8-80b8-5afb06361626"
     },
-    "bricksNumber": 50,
+    "bricksNumber": 0,
     "_id": "ca2gyh1RNICpNht+TLi8OE"
   },
   {
