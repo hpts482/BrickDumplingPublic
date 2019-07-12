@@ -56,14 +56,37 @@ cc.Class({
         this.gameModel.readJson(this);
     },
     initAfter(){
-        console.log('Afterlog');
         this.gameModel.init();
 
         this.gameView.init(this);
         this.ball.init(this);
         this.paddle.init();
-        this.brickLayout.init(this.gameModel.bricksNumber,this.gameModel.currentStage);
+        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage);
         this.overPanel.init(this);
+    },
+
+    //下个关卡初始化
+    initNextStage(){ 
+        //加分并显示
+        this.gameModel.addScore(500);
+        this.gameView.updateScore(this.gameModel.score);
+        
+        //关卡+1
+        this.gameModel.addStage(1);
+        
+        //初始化球和板子
+        this.ball.initNextStage();
+        this.paddle.initNextStage();
+
+        //关卡布局
+        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage);
+        
+        //隐藏over界面
+        this.overPanel.initNextStage();
+
+        //开启刚体物理
+        this.physicsManager.enabled = true;
+        
     },
 
     startGame() {
@@ -78,12 +101,27 @@ cc.Class({
         this.physicsManager.enabled = true;
     },
 
-    stopGame() {
+    stopGame(type) {
         this.physicsManager.enabled = false;
-        this.overPanel.show(this.gameModel.score, this.gameModel.bricksNumber === 0);
-    },
-    nextStage(){
-        this.brickLayout.init(this.gameModel.bricksNumber,this.gameModel.currentStage);
+
+        //最后一关处理
+        if(this.gameModel.currentStage >= this.gameModel.jsonAll[1].json.total){
+            
+            console.log('最后一关啦！');
+        }
+
+        //死亡处理
+        else if (type === 'dead'){
+            console.log('四啦！');
+            this.overPanel.show(this.gameModel.score, false);
+        }
+
+        //进入下一关处理
+        else if (this.gameModel.bricksNumber <= 0)
+        {
+            this.overPanel.show(this.gameModel.score, true);
+        }
+
     },
 
     onBallContactBrick(ballNode, brickNode) {
@@ -97,7 +135,7 @@ cc.Class({
     },
 
     onBallContactGround(ballNode, groundNode) {
-        this.stopGame();
+        this.stopGame('dead');
     },
 
     onBallContactPaddle(ballNode, paddleNode) {
@@ -110,6 +148,7 @@ cc.Class({
 
     onDestroy() {
         this.physicsManager.enabled = false;
-    }
+    },
+
 
 });

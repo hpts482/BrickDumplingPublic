@@ -11,6 +11,13 @@ cc.Class({
         this.getComponent(cc.RigidBody).linearVelocity = cc.v2(400,400);//初始化速度
     },
 
+    //下一关初始化
+    initNextStage() {
+        
+        this.node.position = cc.v2(360,270);//初始化位置
+        this.getComponent(cc.RigidBody).linearVelocity = cc.v2(400,400);//初始化速度
+    },
+
     onBeginContact(contact, self, other) {
         switch (other.tag) {
             case 1://球碰到砖块

@@ -3,20 +3,20 @@ cc.Class({
 
     properties: {
         score:0,
-        bricksNumber:0,
+        bricksNumber:0,//当前关卡砖块数量
         
-        currentStage:0, //当前积分
+        currentStage:0, //当前关卡
 
     },
 
     init(){
         this.score = 0;
-        this.bricksNumber = 50;
+        this.bricksNumber = 0;
         this.currentStage = 1;
+    },
 
-        //console.log(self.jsonTest);
-        //this.stageLevel = this.readstageLevel(self);
-        //console.log(this.stageLevel);
+    initBrickNum(brickNum){
+        this.bricksNumber = brickNum;
     },
 
     addScore(score){
@@ -62,10 +62,14 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].vanguardType);
                             console.log(self.jsonAll[y].json.contents[x].vanguardStrengthMin);
                             console.log(self.jsonAll[y].json.contents[x].vanguardStrengthMax);
+                            console.log(self.jsonAll[y].json.contents[x].vanguardNumMin);
+                            console.log(self.jsonAll[y].json.contents[x].vanguardNumMax);
                             console.log(self.jsonAll[y].json.contents[x].guardLayout);
                             console.log(self.jsonAll[y].json.contents[x].guardType);
                             console.log(self.jsonAll[y].json.contents[x].guardStrengthMin);
                             console.log(self.jsonAll[y].json.contents[x].guardStrengthMax);
+                            console.log(self.jsonAll[y].json.contents[x].guardNumMin);
+                            console.log(self.jsonAll[y].json.contents[x].guardNumMax);
                             break;
                     }
                 }

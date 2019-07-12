@@ -13,6 +13,10 @@ cc.Class({
 
     init(){
         this.node.x = 360;
+    },
+    
+    initNextStage(){
+        this.node.x = 360;
     }
 
 });
