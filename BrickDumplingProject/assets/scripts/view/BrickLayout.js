@@ -19,6 +19,12 @@ cc.Class({
         this.guaNumMin = Number(jsonAll[1].json.contents[currentStage-1].guardNumMin);
         this.brickRandomNumVan = Math.floor(Math.random()*(this.vanNumMax-this.vanNumMin)+this.vanNumMin);
         this.brickRandomNumGua = Math.floor(Math.random()*(this.guaNumMax-this.guaNumMin)+this.guaNumMin);
+
+        //确定砖块强度
+        this.vanStrMax = Number(jsonAll[1].json.contents[currentStage-1].vanguardStrengthMax);
+        this.vanStrMin = Number(jsonAll[1].json.contents[currentStage-1].vanguardStrengthMin);
+        this.guaStrMax = Number(jsonAll[1].json.contents[currentStage-1].guardStrengthMax);
+        this.guaStrMin = Number(jsonAll[1].json.contents[currentStage-1].guardStrengthMin);
         
         //赋值Model里的砖块数量
         gameModel.initBrickNum(this.brickRandomNumVan + this.brickRandomNumGua);

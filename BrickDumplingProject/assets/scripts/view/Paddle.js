@@ -7,6 +7,15 @@ cc.Class({
             //将世界坐标转化为本地坐标
             let touchPoint = this.node.parent.convertToNodeSpace(event.getLocation());
             this.node.x = touchPoint.x;
+
+            //超出区域则用区域范围
+            //this.node.y = (touchPoint.y>this.node.parent.height)?(this.node.parent.height):(touchPoint.y);
+            //this.node.x = (touchPoint.x<0 || touchPoint.x>this.node.parent.width)?(touchPoint.x<0?(this.node.width/2):(this.node.parent.width-this.node.width/2)):(touchPoint.x);
+
+            //this.node.parent.height //区域高
+            //this.node.parent.width  //区域宽
+            //this.node.width         //板子宽
+
         });
         
     },

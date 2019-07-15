@@ -4,20 +4,27 @@ cc.Class({
     properties: {
         score:0,
         bricksNumber:0,//当前关卡砖块数量
-        
         currentStage:0, //当前关卡
 
+        currentTime:0.0,//当前剩余时间
+        showTime:0.0,//显示剩余时间
     },
+
+
 
     init(){
         this.score = 0;
         this.bricksNumber = 0;
         this.currentStage = 1;
+
+        this.currentTime = 10.0;
+        this.showTime = 10.0;
     },
 
     initBrickNum(brickNum){
         this.bricksNumber = brickNum;
     },
+
 
     addScore(score){
         this.score += score;
@@ -29,6 +36,23 @@ cc.Class({
 
     addStage(n){
         this.currentStage += n;
+    },
+
+    addTime(n){
+        this.currentTime += n;
+    },
+
+
+    updateTime(dt){
+        if(this.currentTime >= 0 ){
+
+            this.currentTime -= dt;
+            if(this.currentTime <=0){
+                this.gameCtrl.stopGame('dead');
+            }
+            this.showTime = this.currentTime.toFixed(1);
+
+        }  
     },
 
     readJson(gameCtrl){

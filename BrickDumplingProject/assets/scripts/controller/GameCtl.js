@@ -55,10 +55,10 @@ cc.Class({
         this.physicsManager.enabled = true;
         this.gameModel.readJson(this);
     },
+
     initAfter(){
         this.gameModel.init();
-
-        this.gameView.init(this);
+        this.gameView.init(this,this.gameModel);
         this.ball.init(this);
         this.paddle.init();
         this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage);
@@ -71,9 +71,10 @@ cc.Class({
         this.gameModel.addScore(500);
         this.gameView.updateScore(this.gameModel.score);
         
-        //关卡+1
+        //关卡+1,时间+5
         this.gameModel.addStage(1);
-        
+        this.gameModel.addTime(5);
+
         //初始化球和板子
         this.ball.initNextStage();
         this.paddle.initNextStage();
@@ -94,11 +95,16 @@ cc.Class({
     },
 
     pauseGame() {
-        this.physicsManager.enabled = false;
-    },
 
-    resumeGame() {
-        this.physicsManager.enabled = true;
+        if(this.physicsManager.enabled){
+            this.physicsManager.enabled = false;
+            this.paddle.node.parent.pauseSystemEvents(true);
+        }
+        else{
+            this.physicsManager.enabled = true;
+            this.paddle.node.parent.resumeSystemEvents(true);
+        }
+
     },
 
     stopGame(type) {
@@ -126,6 +132,7 @@ cc.Class({
 
     onBallContactBrick(ballNode, brickNode) {
         brickNode.parent = null;
+        brickNode.destroy();
         this.gameModel.addScore(1);
         this.gameModel.minusBrick(1);
         this.gameView.updateScore(this.gameModel.score);
