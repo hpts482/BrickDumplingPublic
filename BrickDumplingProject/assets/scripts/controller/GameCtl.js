@@ -108,6 +108,7 @@ cc.Class({
     },
 
     stopGame(type) {
+
         this.physicsManager.enabled = false;
 
         //最后一关处理

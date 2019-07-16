@@ -65,7 +65,6 @@ cc.Class({
                 console.log(err);
                 return;
             }
-            console.log("111");
             self.jsonAll = obj;
             
             //检查json读取
