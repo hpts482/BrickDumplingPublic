@@ -7,11 +7,13 @@ cc.Class({
         ball: require('Ball'),
         paddle: require('Paddle'),
         brickLayout: require('BrickLayout'),
-       // overPanel: require('OverPanel'),
-        overPanel:{
+        overPanel: require('OverPanel'),
+        /*overPanel:{
             default:null,
             type:cc.require('OverPanel'),
-        },
+        },*/
+
+        itemPrefab:cc.Prefab,
     },
 
     // use this for initialization
@@ -61,7 +63,7 @@ cc.Class({
         this.gameView.init(this,this.gameModel);
         this.ball.init(this);
         this.paddle.init();
-        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage);
+        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage,this);
         this.overPanel.init(this);
     },
 
@@ -80,7 +82,7 @@ cc.Class({
         this.paddle.initNextStage();
 
         //关卡布局
-        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage);
+        this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage,this);
         
         //隐藏over界面
         this.overPanel.initNextStage();
@@ -132,13 +134,19 @@ cc.Class({
     },
 
     onBallContactBrick(ballNode, brickNode) {
-        brickNode.parent = null;
-        brickNode.destroy();
-        this.gameModel.addScore(1);
-        this.gameModel.minusBrick(1);
-        this.gameView.updateScore(this.gameModel.score);
-        if (this.gameModel.bricksNumber <= 0) {
-            this.stopGame();
+        let brickStr = brickNode.getComponent('Brick').minusStr(1);
+        if(brickStr<=0){
+            brickNode.parent = null;
+            brickNode.destroy();
+            this.gameModel.addScore(1);
+            this.gameModel.minusBrick(1);
+            this.gameView.updateScore(this.gameModel.score);
+            if (this.gameModel.bricksNumber <= 0) {
+                this.stopGame();
+            }
+        }
+        else{
+            brickNode.getComponent('Brick').updateStr();
         }
     },
 
@@ -152,6 +160,25 @@ cc.Class({
 
     onBallContactWall(ballNode, brickNode) {
 
+    },
+
+    onItemContactBall(itemNode, ball) {
+        itemNode.parent = null;
+        itemNode.destroy();
+        this.gameModel.addTime(10);
+    },
+
+    onItemContactPaddle(itemNode, paddle) {
+        itemNode.parent = null;
+        itemNode.destroy();
+        this.gameModel.addTime(10);
+    },
+
+    instItem(position,type){
+        let itemPrefab = cc.instantiate(this.itemPrefab);
+        itemPrefab.parent = cc.find("PhysicsLayer/brick_layout");
+        itemPrefab.position = position;
+        itemPrefab.getComponent('Item').init(this,type);
     },
 
     onDestroy() {

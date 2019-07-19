@@ -2,15 +2,26 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        itemPrefab:cc.Prefab,
         brickSprite:cc.spriteFrame,
         Strength:0,
     },
 
+    init(gameCtl){
+        this.gameCtl = gameCtl;
+    },
+
     onDestroy(){
-        /*let itemPrefab = cc.instantiate(this.itemPrefab);
-        itemPrefab.parent = cc.find("PhysicsLayer");
-        itemPrefab.position = cc.v2(375,667);*/
+        console.log('砖块删除！')
+        //1~10随机
+        let ranNum = Math.floor(Math.random()*4+1);
+
+        //30%概率获得道具
+        if(ranNum <= 3){
+            this.gameCtl.instItem(this.node.position,ranNum);
+        }
+        else{
+            console.log('未获得道具，随机数为：' + ranNum);
+        }
     },
 
     setStr(n){
@@ -18,11 +29,16 @@ cc.Class({
         this.updateStr();    
     },
 
+    minusStr(n){
+        this.Strength -= n;
+        return this.Strength;
+    },
+
     updateStr(){
         let self = this;
         let url = String('dyTexture/brick/brick_'+this.Strength);
 
-        console.log('Wall url :'+url);
+        //console.log('Wall url :'+url);
 
         //加载资源
         cc.loader.loadRes(url,function(err,obj){
@@ -37,16 +53,8 @@ cc.Class({
     },
 
     UpdataStrSpr(obj){
-        //this.node.getComponent(cc.Sprite).spriteFrame.setTexture(obj);
         this.brickSprite = new cc.SpriteFrame(obj);
         this.node.getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-
-        //this.node.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(obj);
-        //console.log(this.node.getComponent(cc.Sprite).spriteFrame);
-        //console.log(obj);
-
-        //let sf = this.node.getComponent(cc.Sprite).spriteFrame;
-        //console.log('Brick Texture: '+ sf.getTexture);
     },
 
 });

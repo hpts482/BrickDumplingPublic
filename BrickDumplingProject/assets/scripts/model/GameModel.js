@@ -17,8 +17,8 @@ cc.Class({
         this.bricksNumber = 0;
         this.currentStage = 1;
 
-        this.currentTime = 10.0;
-        this.showTime = 10.0;
+        this.currentTime = 60.0;
+        this.showTime = 60.0;
     },
 
     initBrickNum(brickNum){
