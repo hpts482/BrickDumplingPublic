@@ -8,6 +8,8 @@ cc.Class({
 
         currentTime:0.0,//当前剩余时间
         showTime:0.0,//显示剩余时间
+
+        power:0.0,//能量
     },
 
 
@@ -19,6 +21,8 @@ cc.Class({
 
         this.currentTime = 60.0;
         this.showTime = 60.0;
+
+        this.power = 0.0;
     },
 
     initBrickNum(brickNum){
@@ -42,7 +46,6 @@ cc.Class({
         this.currentTime += n;
     },
 
-
     updateTime(dt){
         if(this.currentTime >= 0 ){
 
@@ -51,8 +54,25 @@ cc.Class({
                 this.gameCtrl.stopGame('dead');
             }
             this.showTime = this.currentTime.toFixed(1);
-
         }  
+    },
+
+    addPower(n){
+        this.power = (this.power + n/100) > 1.0 ? 1.0 : (this.power + n/100);
+
+        if(this.power >= 1.0 && !this.gameCtrl.powerOnBool){
+            this.gameCtrl.powerOnBool = true;
+            this.gameCtrl.powerOn();
+        }
+    },
+
+    minusPower(n){
+        this.power = (this.power - n/10) < 0.0 ? 0.0 : (this.power - n/10);
+
+        if(this.power <= 0.0 && this.gameCtrl.powerOnBool){
+            this.gameCtrl.powerOnBool = false;
+            this.gameCtrl.powerOn();
+        }
     },
 
     readJson(gameCtrl){

@@ -4,6 +4,8 @@ cc.Class({
     properties: {
         scoreLabel:cc.Label,
         timeLabel:cc.Label,
+        stageLabel:cc.Label,
+        powerProgress:cc.ProgressBar,
         initBool:false,
     },
 
@@ -12,20 +14,41 @@ cc.Class({
         this.gameModel = gameModel;
         this.scoreLabel.string = '0';
         this.timeLabel.string = '0.0';
-        this.initBool = true;
+        this.stageLabel.string = '1';
+        this.initBool = true; //确认初始化完成
+
+        this.updatePower(this.gameModel.power);
     },
 
     update(dt){
         if(this.initBool){
             if(this.gameCtl.physicsManager.enabled === true){
+                //更新时间
                 this.gameModel.updateTime(dt);
+                this.timeLabel.string = (this.gameModel.currentTime <= 0.0)?('0.0'):(this.gameModel.showTime);
+
+                //powerOn时更新能量条
+                if(this.gameCtl.powerOnBool){
+                    this.gameModel.minusPower(dt);
+                    this.updatePower(this.gameModel.power);
+                }
             }
-    
-            this.timeLabel.string = (this.gameModel.currentTime <= 0.0)?('0.0'):(this.gameModel.showTime);
         }
     },
 
     updateScore(score){
         this.scoreLabel.string = score;
+    },
+
+    updatePower(power){
+        this.powerProgress.progress = power;
+    },
+
+    updateStage(stage){
+        this.stageLabel.string = stage;
+    },
+
+    colPower(color){
+        this.powerProgress.node.getChildByName('bar').color = color;
     },
 });

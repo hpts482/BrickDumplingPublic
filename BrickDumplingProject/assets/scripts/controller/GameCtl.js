@@ -8,12 +8,8 @@ cc.Class({
         paddle: require('Paddle'),
         brickLayout: require('BrickLayout'),
         overPanel: require('OverPanel'),
-        /*overPanel:{
-            default:null,
-            type:cc.require('OverPanel'),
-        },*/
-
         itemPrefab:cc.Prefab,
+        powerOnBool:false, // 能量开启的开关
     },
 
     // use this for initialization
@@ -59,6 +55,10 @@ cc.Class({
     },
 
     initAfter(){
+        //初始化能量
+        this.powerOnBool = false; 
+        this.powerOn();
+
         this.gameModel.init();
         this.gameView.init(this,this.gameModel);
         this.ball.init(this);
@@ -76,6 +76,7 @@ cc.Class({
         //关卡+1,时间+5
         this.gameModel.addStage(1);
         this.gameModel.addTime(5);
+        this.gameView.updateStage(this.gameModel.currentStage);
 
         //初始化球和板子
         this.ball.initNextStage();
@@ -86,6 +87,10 @@ cc.Class({
         
         //隐藏over界面
         this.overPanel.initNextStage();
+
+        //初始化能量
+        this.powerOnBool = false;
+        this.powerOn();
 
         //开启刚体物理
         this.physicsManager.enabled = true;
@@ -134,7 +139,9 @@ cc.Class({
     },
 
     onBallContactBrick(ballNode, brickNode) {
-        let brickStr = brickNode.getComponent('Brick').minusStr(1);
+        let brickStr = brickNode.getComponent(cc.Component).minusStr(1);
+
+        //砖块减强度&加分
         if(brickStr<=0){
             brickNode.parent = null;
             brickNode.destroy();
@@ -146,8 +153,12 @@ cc.Class({
             }
         }
         else{
-            brickNode.getComponent('Brick').updateStr();
+            brickNode.getComponent(cc.Component).updateStr();
         }
+
+        //增加能量
+        this.gameModel.addPower(50);
+        this.gameView.updatePower(this.gameModel.power);
     },
 
     onBallContactGround(ballNode, groundNode) {
@@ -162,11 +173,11 @@ cc.Class({
 
     },
 
-    onItemContactBall(itemNode, ball) {
+    /*onItemContactBall(itemNode, ball) {
         itemNode.parent = null;
         itemNode.destroy();
         this.gameModel.addTime(10);
-    },
+    },*/
 
     onItemContactPaddle(itemNode, paddle) {
         itemNode.parent = null;
@@ -181,9 +192,24 @@ cc.Class({
         itemPrefab.getComponent('Item').init(this,type);
     },
 
+    powerOn(){
+        switch(this.powerOnBool){
+            case true:
+                this.ball.powerBallBig(this.powerOnBool);
+                this.gameView.colPower(cc.Color.RED);
+                break;
+            case false:
+                this.ball.powerBallBig(this.powerOnBool);
+                this.gameView.colPower(cc.Color.WHITE);
+                break;
+        }
+    },
+
     onDestroy() {
         this.physicsManager.enabled = false;
     },
+
+
 
 
 });
