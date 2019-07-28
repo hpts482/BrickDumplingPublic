@@ -33,10 +33,11 @@ cc.Class({
             case 3://道具碰到托盘
                 this.gameCtl.onItemContactPaddle(self.node, other.node);
                 break;
-            /*case 5://道具碰到球
-                this.gameCtl.onItemContactBall(self.node, other.node);
+            case 2://道具碰到地面
+                self.node.parent = null;
+                self.node.destroy();
                 break;
-                */
+                
         }
     },
 

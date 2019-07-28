@@ -47,8 +47,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.5140569133280305,
-      "y": 0.5140569133280305,
+      "x": 0.535794159679532,
+      "y": 0.535794159679532,
       "z": 1
     },
     "_quat": {
@@ -1707,7 +1707,7 @@
       "__id__": 41
     },
     "_enabled": true,
-    "rMinAngle": 10,
+    "rMinAngle": 15,
     "_id": "02mZLguFRI+IOIk1G3+Yom"
   },
   {
@@ -2280,8 +2280,11 @@
     "brickPrefab": {
       "__uuid__": "edbd9d67-e2ab-4be8-80b8-5afb06361626"
     },
-    "brickBossPrefab": {
+    "brickBossSmallPrefab": {
       "__uuid__": "77a32163-cdb2-4d68-b0bb-3fa0a39a5d8e"
+    },
+    "brickBossBigPrefab": {
+      "__uuid__": "cffd6951-5e95-481e-b1c2-a00b3e654646"
     },
     "bricksNumber": 0,
     "_id": "ca2gyh1RNICpNht+TLi8OE"
