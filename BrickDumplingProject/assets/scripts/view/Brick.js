@@ -13,11 +13,11 @@ cc.Class({
     onDestroy(){
         console.log('砖块删除！')
         //1~10随机
-        let ranNum = Math.floor(Math.random()*4+1);
+        let ranNum = Math.floor(Math.random()*10+1);
 
-        //30%概率获得道具
-        if(ranNum <= 3){
-            this.gameCtl.instItem(this.node.position,ranNum);
+        //50%概率获得道具
+        if(ranNum <= 5){
+            this.gameCtl.instItem(this.node.position);
         }
         else{
             console.log('未获得道具，随机数为：' + ranNum);

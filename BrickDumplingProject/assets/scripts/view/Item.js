@@ -2,12 +2,20 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        type:0,
+        type:0, //1加时间 4加金币
     },
 
-    init(gameCtl,type){
+    init(gameCtl){
         this.gameCtl = gameCtl;
-        this.type = type;
+        let ranNum = Math.floor(Math.random()*100+1);
+        //1加时间
+        if(ranNum<=50){
+            this.type = 1;
+        }
+        //4加金币
+        else if(ranNum>50){
+            this.type = 99;
+        }
         this.updateSpr();
     },
 
@@ -31,7 +39,7 @@ cc.Class({
     onBeginContact(contact, self, other) {
         switch (other.tag) {
             case 3://道具碰到托盘
-                this.gameCtl.onItemContactPaddle(self.node, other.node);
+                this.gameCtl.onItemContactPaddle(self.node, other.node,this.type);
                 break;
             case 2://道具碰到地面
                 self.node.parent = null;

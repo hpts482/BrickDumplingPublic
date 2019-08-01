@@ -179,17 +179,28 @@ cc.Class({
         this.gameModel.addTime(10);
     },*/
 
-    onItemContactPaddle(itemNode, paddle) {
+    onItemContactPaddle(itemNode,paddle,type) {
         itemNode.parent = null;
         itemNode.destroy();
-        this.gameModel.addTime(10);
+        switch(type){
+            //拾取加时间道具
+            case 1:
+                this.gameModel.addTime(10);
+                break;
+            //拾取加金币道具
+            case 99:
+                this.gameModel.addGold(1);
+                this.gameView.updateGold(this.gameModel.gold);
+                break;
+        }
+
     },
 
-    instItem(position,type){
+    instItem(position){
         let itemPrefab = cc.instantiate(this.itemPrefab);
         itemPrefab.parent = cc.find("PhysicsLayer/brick_layout");
         itemPrefab.position = position;
-        itemPrefab.getComponent('Item').init(this,type);
+        itemPrefab.getComponent('Item').init(this);
     },
 
     powerOn(){

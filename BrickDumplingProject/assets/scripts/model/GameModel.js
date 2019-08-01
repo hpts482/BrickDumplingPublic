@@ -3,6 +3,7 @@ cc.Class({
 
     properties: {
         score:0,
+        gold:0,
         bricksNumber:0,//当前关卡砖块数量
         currentStage:0, //当前关卡
 
@@ -12,10 +13,9 @@ cc.Class({
         power:0.0,//能量
     },
 
-
-
     init(){
         this.score = 0;
+        this.gold = 0;
         this.bricksNumber = 0;
         this.currentStage = 1;
 
@@ -32,6 +32,14 @@ cc.Class({
 
     addScore(score){
         this.score += score;
+    },
+
+    addGold(gold){
+        this.gold += gold;
+    },
+
+    minusGold(gold){
+        this.gold -= gold;
     },
 
     minusBrick(n){

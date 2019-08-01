@@ -151,19 +151,22 @@ cc.Class({
 
         //非boss
         else{
-            /*for (let i = 0; i < brickNum; i++) {
-                let brickNode = cc.instantiate(this.brickPrefab);
-                brickNode.parent = this.node;
-                brickNode.getComponent(cc.Component).init(this.gameCtl);
-
-                brickNode.x = this.padding + (i % this.cols) * (brickNode.width + this.spacing) + brickNode.width / 2;
-                //间距 + 0*（宽度+间距） + 宽度/2
-                //间距 + 1*（宽度+间距） + 宽度/2
-                brickNode.y = -this.padding - Math.floor((i+this.cols*10) / this.cols) * (brickNode.height + this.spacing) - brickNode.height / 2;
-                //-间距 - 下取整（0/10）* （高度 + 间距） - 高度/2 -10 - 0 * （28 + 10）-28/2
-                //-间距 - 下取整（1/10）* （高度 + 间距） - 高度/2 -10 - 0 * （28 + 10）-28/2
-                this.brickStrVan(brickNode);
-            }*/
+            //随机类型
+            let ranNum = Math.floor(Math.random()+1);
+            switch(ranNum){
+                //双点阵
+                case 1:
+                    for (let i = 0; i < 4; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.node;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl);
+        
+                        brickNode.x = this.padding + ((i % 2) * (this.cols-3)+1)* (brickNode.width + this.spacing) + brickNode.width / 2;
+                        brickNode.y = -this.padding - Math.floor( i /2 +7)*(brickNode.height + this.spacing) - brickNode.height / 2;
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+            }  
         }
     },
 

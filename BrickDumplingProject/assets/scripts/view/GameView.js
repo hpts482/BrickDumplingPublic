@@ -5,6 +5,7 @@ cc.Class({
         scoreLabel:cc.Label,
         timeLabel:cc.Label,
         stageLabel:cc.Label,
+        goldLabel:cc.Label,
         powerProgress:cc.ProgressBar,
         initBool:false,
     },
@@ -15,6 +16,7 @@ cc.Class({
         this.scoreLabel.string = '0';
         this.timeLabel.string = '0.0';
         this.stageLabel.string = '1';
+        this.goldLabel.string = '0';
         this.initBool = true; //确认初始化完成
 
         this.updatePower(this.gameModel.power);
@@ -46,6 +48,10 @@ cc.Class({
 
     updateStage(stage){
         this.stageLabel.string = stage;
+    },
+
+    updateGold(gold){
+        this.goldLabel.string = gold;
     },
 
     colPower(color){
