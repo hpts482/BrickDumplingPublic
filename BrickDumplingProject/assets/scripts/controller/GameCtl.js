@@ -8,6 +8,8 @@ cc.Class({
         paddle: require('Paddle'),
         brickLayout: require('BrickLayout'),
         overPanel: require('OverPanel'),
+        shopPanel:require('ShopPanel'),
+        security:require('Security'),
         itemPrefab:cc.Prefab,
         powerOnBool:false, // 能量开启的开关
     },
@@ -32,6 +34,10 @@ cc.Class({
              //减速
             else if (event.keyCode === cc.macro.KEY.w) { 
                 this.ball.ballVelocityUp();
+            }
+             //加钱
+            else if (event.keyCode === cc.macro.KEY.up){
+                this.gameModel.addGold(1);
             }
 
         });
@@ -64,7 +70,21 @@ cc.Class({
         this.ball.init(this);
         this.paddle.init();
         this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage,this);
+
+        //其他界面
         this.overPanel.init(this);
+        this.shopPanel.init(this);
+        this.security.init(this);
+    },
+
+    //是否显示商店
+    isShop(){
+        if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage - 1].boss) > 0){
+            this.shopPanel.show(this.gameModel);
+        }
+        else{
+            this.initNextStage();
+        }   
     },
 
     //下个关卡初始化
@@ -85,8 +105,10 @@ cc.Class({
         //关卡布局
         this.brickLayout.init(this.gameModel,this.gameModel.jsonAll,this.gameModel.currentStage,this);
         
-        //隐藏over界面
+        //隐藏其他界面
         this.overPanel.initNextStage();
+        this.shopPanel.initNextStage();
+        this.security.initNextStage();
 
         //初始化能量
         this.powerOnBool = false;
@@ -104,10 +126,12 @@ cc.Class({
     pauseGame() {
 
         if(this.physicsManager.enabled){
+            cc.director.pause();
             this.physicsManager.enabled = false;
             this.paddle.node.parent.pauseSystemEvents(true);
         }
         else{
+            cc.director.resume();
             this.physicsManager.enabled = true;
             this.paddle.node.parent.resumeSystemEvents(true);
         }
@@ -173,6 +197,10 @@ cc.Class({
 
     },
 
+    onBallContactSecurity(ballNode, brickNode) {
+
+    },
+
     /*onItemContactBall(itemNode, ball) {
         itemNode.parent = null;
         itemNode.destroy();
@@ -185,13 +213,42 @@ cc.Class({
         switch(type){
             //拾取加时间道具
             case 1:
-                this.gameModel.addTime(10);
+                this.gameModel.addTime(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
                 break;
+
+            //拾取加能量道具
+            case 2:
+                this.gameModel.addPower(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
+                this.gameView.updatePower(this.gameModel.power);
+                break;
+
             //拾取加金币道具
-            case 99:
-                this.gameModel.addGold(1);
+            case 3:
+                this.gameModel.addGold(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
                 this.gameView.updateGold(this.gameModel.gold);
                 break;
+
+            //能量递减阻碍不可拾取
+            //case 4:
+
+            //获取保底屏障
+            case 5:
+                let securityTime = 0;
+                switch(this.gameModel.itemLevel[4]){
+                    case 0:
+                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].levelInit);
+                        break;
+                    case 1:
+                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level1);
+                        break;
+                    case 2:
+                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level2);
+                        break;
+                    case 3:
+                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level3);
+                        break;
+                }
+                this.security.show(securityTime);
         }
 
     },
@@ -204,13 +261,12 @@ cc.Class({
     },
 
     powerOn(){
+        this.ball.powerBallBig(this.powerOnBool);
         switch(this.powerOnBool){
             case true:
-                this.ball.powerBallBig(this.powerOnBool);
                 this.gameView.colPower(cc.Color.RED);
                 break;
             case false:
-                this.ball.powerBallBig(this.powerOnBool);
                 this.gameView.colPower(cc.Color.WHITE);
                 break;
         }

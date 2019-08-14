@@ -11,6 +11,7 @@ cc.Class({
         showTime:0.0,//显示剩余时间
 
         power:0.0,//能量
+        itemLevel:[],//对应各个道具的等级
     },
 
     init(){
@@ -23,6 +24,12 @@ cc.Class({
         this.showTime = 60.0;
 
         this.power = 0.0;
+        
+        //初始化各个道具的等级
+        for(let i=0; i < Number(this.jsonAll[2].json.total); i++){
+            this.itemLevel[i] = 0;
+        }
+
     },
 
     initBrickNum(brickNum){
@@ -50,6 +57,10 @@ cc.Class({
         this.currentStage += n;
     },
 
+    addItemLevel(id,n){
+        this.itemLevel[id] += n;
+    },
+
     addTime(n){
         this.currentTime += n;
     },
@@ -75,7 +86,25 @@ cc.Class({
     },
 
     minusPower(n){
-        this.power = (this.power - n/10) < 0.0 ? 0.0 : (this.power - n/10);
+        //powerSlow记录能量递减的速度
+        let powerSlow = 0;
+        switch(this.itemLevel[3]){
+            case 0:
+                powerSlow = Number(this.jsonAll[2].json.contents[3].levelInit);
+                break;
+            case 1:
+                powerSlow = Number(this.jsonAll[2].json.contents[3].level1);
+                break;
+            case 2:
+                powerSlow = Number(this.jsonAll[2].json.contents[3].level2);
+                break;
+            case 3:
+                powerSlow = Number(this.jsonAll[2].json.contents[3].level3);
+                break;
+        }
+
+        //5是能量递减的默认速度阻碍值
+        this.power = (this.power - (n/5)*(1 - powerSlow/100)) < 0.0 ? 0.0 : (this.power - (n/5)*(1 - powerSlow/100));
 
         if(this.power <= 0.0 && this.gameCtrl.powerOnBool){
             this.gameCtrl.powerOnBool = false;
@@ -86,7 +115,7 @@ cc.Class({
     readJson(gameCtrl){
         let self = this;
         this.gameCtrl = gameCtrl;
-        let url = ['test','stageLevel'];
+        let url = ['test','stageLevel','item'];
         
         cc.loader.loadResArray(url,function(err,obj){
             if(err){
@@ -121,6 +150,19 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].guardStrengthMax);
                             console.log(self.jsonAll[y].json.contents[x].guardNumMin);
                             console.log(self.jsonAll[y].json.contents[x].guardNumMax);
+                        case 2:
+                            console.log(self.jsonAll[y].json.contents[x].key);
+                            console.log(self.jsonAll[y].json.contents[x].type);
+                            console.log(self.jsonAll[y].json.contents[x].name);
+                            console.log(self.jsonAll[y].json.contents[x].tips);
+                            console.log(self.jsonAll[y].json.contents[x].levelInit);
+                            console.log(self.jsonAll[y].json.contents[x].level1);
+                            console.log(self.jsonAll[y].json.contents[x].level2);
+                            console.log(self.jsonAll[y].json.contents[x].level3);
+                            console.log(self.jsonAll[y].json.contents[x].levelPrice1);
+                            console.log(self.jsonAll[y].json.contents[x].levelPrice2);
+                            console.log(self.jsonAll[y].json.contents[x].levelPrice3);
+                            console.log(self.jsonAll[y].json.contents[x].ratio);
                             break;
                     }
                 }

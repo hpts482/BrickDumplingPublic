@@ -45,6 +45,6 @@ cc.Class({
     },
     
     onBtnNextStage(){
-        this.gameCtl.initNextStage();
+        this.gameCtl.isShop();
     },
 });

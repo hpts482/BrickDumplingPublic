@@ -17,6 +17,8 @@ cc.Class({
         this.timeLabel.string = '0.0';
         this.stageLabel.string = '1';
         this.goldLabel.string = '0';
+
+        
         this.initBool = true; //确认初始化完成
 
         this.updatePower(this.gameModel.power);

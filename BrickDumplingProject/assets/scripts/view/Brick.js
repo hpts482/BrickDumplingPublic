@@ -15,8 +15,8 @@ cc.Class({
         //1~10随机
         let ranNum = Math.floor(Math.random()*10+1);
 
-        //50%概率获得道具
-        if(ranNum <= 5){
+        //80%概率获得道具
+        if(ranNum <= 8){
             this.gameCtl.instItem(this.node.position);
         }
         else{

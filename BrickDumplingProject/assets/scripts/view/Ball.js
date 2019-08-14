@@ -32,6 +32,8 @@ cc.Class({
             case 4://球碰到墙
                 this.gameCtl.onBallContactWall(self.node, other.node);
                 break;
+            case 5://球碰到保底
+                this.gameCtl.onBallContactSecurity(self.node, other.node);
         }
     },
 
