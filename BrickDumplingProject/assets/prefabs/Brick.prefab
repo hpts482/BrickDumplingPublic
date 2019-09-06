@@ -46,7 +46,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 90,
-      "height": 45
+      "height": 41
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -102,7 +102,7 @@
       "__uuid__": "bdcf641f-282f-459b-ab4a-60c52f305875"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -115,7 +115,7 @@
     "_state": 0,
     "_atlas": null,
     "_srcBlendFactor": 770,
-    "_dstBlendFactor": 772,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {

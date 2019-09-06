@@ -24,6 +24,7 @@ cc.Class({
         this.guaNumMin = Number(jsonAll[1].json.contents[currentStage-1].guardNumMin);
         this.brickRandomNumVan = Math.floor(Math.random()*(this.vanNumMax-this.vanNumMin+1)+this.vanNumMin);
         this.brickRandomNumGua = Math.floor(Math.random()*(this.guaNumMax-this.guaNumMin+1)+this.guaNumMin);
+        this.isNotBossNum = 0;
 
         //确定砖块强度范围
         this.vanStrMax = Number(jsonAll[1].json.contents[currentStage-1].vanguardStrengthMax);
@@ -33,28 +34,14 @@ cc.Class({
         this.bossStrMax = Number(jsonAll[1].json.contents[currentStage-1].bossStrengthMax);
         this.bossStrMin = Number(jsonAll[1].json.contents[currentStage-1].bossStrengthMin);
 
-        //赋值Model里的砖块数量  -2测试
-        gameModel.initBrickNum(this.brickRandomNumVan + this.brickRandomNumGua - 2);
-
         //执行砖块布局
         this.vanguardLayout(Number(jsonAll[1].json.contents[currentStage-1].vanguardLayout),this.brickRandomNumVan);
         this.bossLayout(Number(jsonAll[1].json.contents[currentStage-1].boss),Number(jsonAll[1].json.contents[currentStage-1].bossLayout));
         this.guardLayout(Number(jsonAll[1].json.contents[currentStage-1].guardLayout),this.brickRandomNumGua);
 
-        /*  console.log(self.jsonAll[y].json.contents[x].key);
-            console.log(self.jsonAll[y].json.contents[x].boss);
-            console.log(self.jsonAll[y].json.contents[x].vanguardLayout);
-            console.log(self.jsonAll[y].json.contents[x].vanguardType);
-            console.log(self.jsonAll[y].json.contents[x].vanguardStrengthMin);
-            console.log(self.jsonAll[y].json.contents[x].vanguardStrengthMax);
-            console.log(self.jsonAll[y].json.contents[x].vanguardNumMin);
-            console.log(self.jsonAll[y].json.contents[x].vanguardNumMax);
-            console.log(self.jsonAll[y].json.contents[x].guardLayout);
-            console.log(self.jsonAll[y].json.contents[x].guardType);
-            console.log(self.jsonAll[y].json.contents[x].guardStrengthMin);
-            console.log(self.jsonAll[y].json.contents[x].guardStrengthMax);
-            console.log(self.jsonAll[y].json.contents[x].guardNumMin);
-            console.log(self.jsonAll[y].json.contents[x].guardNumMax);*/
+        //赋值Model里的砖块数量（包括前锋、后卫、非boss陪衬）
+        gameModel.initBrickNum(this.brickRandomNumVan + this.brickRandomNumGua + this.isNotBossNum);
+
     },
 
     //boss布局
@@ -156,7 +143,8 @@ cc.Class({
             switch(ranNum){
                 //双点阵
                 case 1:
-                    for (let i = 0; i < 4; i++) {
+                    this.isNotBossNum = 4;
+                    for (let i = 0; i < this.isNotBossNum; i++) {
                         let brickNode = cc.instantiate(this.brickPrefab);
                         brickNode.parent = this.node;
                         brickNode.getComponent(cc.Component).init(this.gameCtl);

@@ -46,7 +46,7 @@ cc.Class({
         for(let i=0 ; i<this.cutRatio.length ; i++){
             //不满足概率找下一个概率点
             if(ranNum > this.cutRatio[i]){
-                
+
             }
             //满足条件获取type
             else{

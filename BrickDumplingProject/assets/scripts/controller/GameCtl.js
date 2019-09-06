@@ -10,7 +10,9 @@ cc.Class({
         overPanel: require('OverPanel'),
         shopPanel:require('ShopPanel'),
         security:require('Security'),
+        pausePanel:require('PausePanel'),
         itemPrefab:cc.Prefab,
+        cannonPrefab:cc.Prefab,
         powerOnBool:false, // 能量开启的开关
     },
 
@@ -75,6 +77,12 @@ cc.Class({
         this.overPanel.init(this);
         this.shopPanel.init(this);
         this.security.init(this);
+        this.pausePanel.init(this);
+
+        //生成炮台
+        this.instCannon();
+        //发球
+        this.startCannon(1);
     },
 
     //是否显示商店
@@ -109,14 +117,33 @@ cc.Class({
         this.overPanel.initNextStage();
         this.shopPanel.initNextStage();
         this.security.initNextStage();
+        this.pausePanel.initNextStage();
 
         //初始化能量
         this.powerOnBool = false;
         this.powerOn();
 
+        //初始化关卡任务
+        this.gameModel.initMission();
+        this.gameView.updateMission();
+
         //开启刚体物理
         this.physicsManager.enabled = true;
-        
+
+        //发球
+        this.startCannon(1);
+    },
+
+    //生成炮台
+    instCannon(){
+        this.cannonNode = cc.instantiate(this.cannonPrefab);
+        this.cannonNode.parent = cc.find("PhysicsLayer/paddle_area/cannonPosition");
+        this.cannonNode.getComponent(cc.Component).init(this);
+    },
+
+    //发球或发辅助球，参数1代表主球，参数2代表辅球
+    startCannon(type){
+        this.cannonNode.getComponent(cc.Component).serveBall(type);
     },
 
     startGame() {
@@ -124,23 +151,45 @@ cc.Class({
     },
 
     pauseGame() {
-
         if(this.physicsManager.enabled){
             cc.director.pause();
             this.physicsManager.enabled = false;
             this.paddle.node.parent.pauseSystemEvents(true);
+
+            //显示暂停界面
+            this.pausePanel.show();
         }
         else{
             cc.director.resume();
             this.physicsManager.enabled = true;
             this.paddle.node.parent.resumeSystemEvents(true);
         }
+    },
 
+    //任务判断
+    isMissionCompleted(brickNode){
+        if(this.gameModel.currentMission[0] == 1){
+            this.gameModel.missionCurVal(1);
+            this.gameView.updateMission();
+            if(this.gameModel.currentMission[2] >= this.gameModel.currentMission[1]){
+                this.stopGame();
+            }
+            else{
+            }
+        }
+        else if(this.gameModel.currentMission[0] == 2){
+            console.log('是不是boss？'+typeof(brickNode.getComponent(cc.Component).bossType));
+            if(typeof(brickNode.getComponent(cc.Component).bossType) != 'undefined'){
+                this.stopGame();
+            }
+        }
     },
 
     stopGame(type) {
-
         this.physicsManager.enabled = false;
+
+        //停止发球计时器
+        this.unschedule(this.restartBallScheduleOnce);
 
         //最后一关处理
         if(this.gameModel.currentStage >= this.gameModel.jsonAll[1].json.total){
@@ -155,8 +204,7 @@ cc.Class({
         }
 
         //进入下一关处理
-        else if (this.gameModel.bricksNumber <= 0)
-        {
+        else{
             this.overPanel.show(this.gameModel.score, true);
         }
 
@@ -172,9 +220,9 @@ cc.Class({
             this.gameModel.addScore(1);
             this.gameModel.minusBrick(1);
             this.gameView.updateScore(this.gameModel.score);
-            if (this.gameModel.bricksNumber <= 0) {
-                this.stopGame();
-            }
+            
+            //执行关卡胜利判断
+            this.isMissionCompleted(brickNode);
         }
         else{
             brickNode.getComponent(cc.Component).updateStr();
@@ -186,7 +234,22 @@ cc.Class({
     },
 
     onBallContactGround(ballNode, groundNode) {
-        this.stopGame('dead');
+        //隐藏小球
+        this.ball.isActive(false);
+
+        //扣除时间
+        this.gameModel.minusTime(3);
+
+        //显示重新发球lab
+        this.gameView.showRestartBallLabel(true);
+
+        //重新发球处理
+        console.log('重新发球');
+        this.restartBallScheduleOnce = function(dt){
+            this.gameView.showRestartBallLabel(false);
+            this.startCannon(1);
+        }
+        this.scheduleOnce(this.restartBallScheduleOnce,2);
     },
 
     onBallContactPaddle(ballNode, paddleNode) {
@@ -208,49 +271,50 @@ cc.Class({
     },*/
 
     onItemContactPaddle(itemNode,paddle,type) {
-        itemNode.parent = null;
-        itemNode.destroy();
-        switch(type){
-            //拾取加时间道具
-            case 1:
-                this.gameModel.addTime(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
-                break;
-
-            //拾取加能量道具
-            case 2:
-                this.gameModel.addPower(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
-                this.gameView.updatePower(this.gameModel.power);
-                break;
-
-            //拾取加金币道具
-            case 3:
-                this.gameModel.addGold(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
-                this.gameView.updateGold(this.gameModel.gold);
-                break;
-
-            //能量递减阻碍不可拾取
-            //case 4:
-
-            //获取保底屏障
-            case 5:
-                let securityTime = 0;
-                switch(this.gameModel.itemLevel[4]){
-                    case 0:
-                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].levelInit);
-                        break;
-                    case 1:
-                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level1);
-                        break;
-                    case 2:
-                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level2);
-                        break;
-                    case 3:
-                        securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level3);
-                        break;
-                }
-                this.security.show(securityTime);
+        if(itemNode.active){
+            itemNode.parent = null;
+            itemNode.destroy();
+            switch(type){
+                //拾取加时间道具
+                case 1:
+                    this.gameModel.addTime(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
+                    break;
+    
+                //拾取加能量道具
+                case 2:
+                    this.gameModel.addPower(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
+                    this.gameView.updatePower(this.gameModel.power);
+                    break;
+    
+                //拾取加金币道具
+                case 3:
+                    this.gameModel.addGold(Number(this.gameModel.jsonAll[2].json.contents[type-1].levelInit));
+                    this.gameView.updateGold(this.gameModel.gold);
+                    break;
+    
+                //能量递减阻碍不可拾取
+                //case 4:
+    
+                //获取保底屏障
+                case 5:
+                    let securityTime = 0;
+                    switch(this.gameModel.itemLevel[4]){
+                        case 0:
+                            securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].levelInit);
+                            break;
+                        case 1:
+                            securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level1);
+                            break;
+                        case 2:
+                            securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level2);
+                            break;
+                        case 3:
+                            securityTime = Number(this.gameModel.jsonAll[2].json.contents[4].level3);
+                            break;
+                    }
+                    this.security.show(securityTime);
+            }
         }
-
     },
 
     instItem(position){
@@ -264,7 +328,7 @@ cc.Class({
         this.ball.powerBallBig(this.powerOnBool);
         switch(this.powerOnBool){
             case true:
-                this.gameView.colPower(cc.Color.RED);
+                this.gameView.colPower(new cc.Color(255,168,168));
                 break;
             case false:
                 this.gameView.colPower(cc.Color.WHITE);
@@ -275,8 +339,4 @@ cc.Class({
     onDestroy() {
         this.physicsManager.enabled = false;
     },
-
-
-
-
 });

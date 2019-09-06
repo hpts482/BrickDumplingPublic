@@ -47,12 +47,12 @@ cc.Class({
                 return;
             }
 
-            self.UpdataStrSpr(obj);
+            self.updataStrSpr(obj);
         });
 
     },
 
-    UpdataStrSpr(obj){
+    updataStrSpr(obj){
         this.brickSprite = new cc.SpriteFrame(obj);
         this.node.getComponent(cc.Sprite).spriteFrame = this.brickSprite;
     },

@@ -7,15 +7,16 @@ cc.Class({
 
     init(gameCtl) {
         this.gameCtl = gameCtl;
-        this.node.position = cc.v2(360,370);//初始化位置
-        this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,450);//初始化速度
+        this.isActive(false);
+        //this.node.position = cc.v2(375,380);//初始化位置
+        //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
     },
 
     //下一关初始化
     initNextStage() {
-        
-        this.node.position = cc.v2(360,370);//初始化位置
-        this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
+        this.isActive(false);
+        //this.node.position = cc.v2(375,380);//初始化位置
+        //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
     },
 
     onBeginContact(contact, self, other) {
@@ -38,6 +39,7 @@ cc.Class({
     },
 
     onPostSolve(contact, self, other){
+        //碰撞后触发
         console.log('当前线速度为：' + this.getComponent(cc.RigidBody).linearVelocity);
 
         let x = this.getComponent(cc.RigidBody).linearVelocity.x;
@@ -49,6 +51,12 @@ cc.Class({
         let rMin = Math.abs(this.rMinAngle) / 180 * Math.PI;
         let rChange = 0;
         
+        //出现减速bug时(碰撞穿插导致)，判为输
+        if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < 0.9 * Math.sqrt(Math.pow(500,2) + Math.pow(500,2))){
+            this.gameCtl.stopGame('dead');
+            console.log('---------------------速度过慢，死亡！' + this.getComponent(cc.RigidBody).linearVelocity);
+        }
+
         //纠正角度过小的问题
         if(Math.abs(r) <= rMin){   
             let rChange = rMin-Math.abs(r);
@@ -82,6 +90,9 @@ cc.Class({
         }
 
         
+
+
+        
         /*   /// <summary>
         /// 旋转向量，使其方向改变，大小不变
         /// </summary>
@@ -109,5 +120,9 @@ cc.Class({
 
     powerBallBig(powerOnBool){
         this.node.setScale(powerOnBool==true?1.5:1);
+    },
+
+    isActive(bool){
+        this.node.active = bool;
     },
 });

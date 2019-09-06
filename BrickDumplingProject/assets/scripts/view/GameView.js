@@ -6,7 +6,9 @@ cc.Class({
         timeLabel:cc.Label,
         stageLabel:cc.Label,
         goldLabel:cc.Label,
+        missionLabel:cc.Label,
         powerProgress:cc.ProgressBar,
+        restartBallLabel:cc.Label,
         initBool:false,
     },
 
@@ -17,11 +19,12 @@ cc.Class({
         this.timeLabel.string = '0.0';
         this.stageLabel.string = '1';
         this.goldLabel.string = '0';
+        this.restartBallLabel.node.active = false;
 
-        
         this.initBool = true; //确认初始化完成
 
         this.updatePower(this.gameModel.power);
+        this.updateMission(); //刷新任务
     },
 
     update(dt){
@@ -56,7 +59,23 @@ cc.Class({
         this.goldLabel.string = gold;
     },
 
+    updateMission(){
+        if(this.gameModel.currentMission[0] == 1){
+            let str = '消灭 x 敌人'
+            str = str.replace(/x/,String(this.gameModel.currentMission[2] + '/' + this.gameModel.currentMission[1]))
+            this.missionLabel.string = str;
+        }
+        else if(this.gameModel.currentMission[0] == 2){
+            let str ='消灭 Boss'
+            this.missionLabel.string = str;   
+        }
+    },
+
     colPower(color){
         this.powerProgress.node.getChildByName('bar').color = color;
+    },
+
+    showRestartBallLabel(bool){
+        this.restartBallLabel.node.active = bool;
     },
 });

@@ -50,7 +50,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 180,
-      "height": 90
+      "height": 82
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -85,7 +85,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "New Label",
+    "_name": "spr_emoji",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -111,8 +111,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 124.49,
-      "height": 40
+      "width": 121,
+      "height": 46
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -146,28 +146,29 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Label",
+    "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 2
     },
     "_enabled": true,
-    "_useOriginalSize": false,
-    "_string": "大boss",
-    "_N$string": "大boss",
-    "_fontSize": 40,
-    "_lineHeight": 40,
-    "_enableWrapText": true,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
-    "_spacingX": 0,
-    "_batchAsBitmap": false,
-    "_N$horizontalAlign": 1,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 0,
-    "_N$cacheMode": 0,
+    "_spriteFrame": null,
+    "_type": 0,
+    "_sizeMode": 1,
+    "_fillType": 0,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": true,
+    "_state": 0,
+    "_atlas": null,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {
@@ -178,7 +179,7 @@
     "asset": {
       "__uuid__": "cffd6951-5e95-481e-b1c2-a00b3e654646"
     },
-    "fileId": "ebt8k2WxZN5rdrFrCOTnKq",
+    "fileId": "653YqwHo5LfqTVv6x+eCNU",
     "sync": false
   },
   {
@@ -202,7 +203,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "40131b5f-6ecd-45bf-862e-6d0c3b524f82"
+      "__uuid__": "2d7ff7ee-4302-45be-a2bc-e18453d805ca"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -218,7 +219,7 @@
     "_state": 0,
     "_atlas": null,
     "_srcBlendFactor": 770,
-    "_dstBlendFactor": 772,
+    "_dstBlendFactor": 771,
     "_id": ""
   },
   {

@@ -6,6 +6,7 @@ cc.Class({
         this.node.parent.on(cc.Node.EventType.TOUCH_MOVE, (event) => {
             //将世界坐标转化为本地坐标
             let touchPoint = this.node.parent.convertToNodeSpace(event.getLocation());
+            this.node.scaleX = touchPoint.x > this.node.x ? 1 : -1;
             this.node.x = touchPoint.x;
 
             //超出区域则用区域范围

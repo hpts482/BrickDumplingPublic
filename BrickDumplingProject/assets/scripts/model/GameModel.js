@@ -5,6 +5,8 @@ cc.Class({
         score:0,
         gold:0,
         bricksNumber:0,//当前关卡砖块数量
+
+        currentMission:[],//当前关卡完成任务：[当前关卡任务type,当前关卡任务value,当前value]
         currentStage:0, //当前关卡
 
         currentTime:0.0,//当前剩余时间
@@ -30,12 +32,32 @@ cc.Class({
             this.itemLevel[i] = 0;
         }
 
+        //初始化关卡任务
+        this.initMission();
     },
 
     initBrickNum(brickNum){
         this.bricksNumber = brickNum;
     },
 
+    initMission(){
+        let type = Number(this.jsonAll[1].json.contents[this.currentStage-1].missionType)
+        let value = Number(this.jsonAll[1].json.contents[this.currentStage-1].missionValue);
+        let current = 0;
+
+        //打倒%砖块
+        if(type == 1){
+            value = Math.floor(value * this.bricksNumber / 100)
+        }
+        //打倒boss
+        else if(type == 2){
+        }
+        this.currentMission = [type,value,current];
+    },
+
+    missionCurVal(n){
+        this.currentMission[2] += n;
+    },
 
     addScore(score){
         this.score += score;
@@ -65,6 +87,10 @@ cc.Class({
         this.currentTime += n;
     },
 
+    minusTime(n){
+        this.currentTime -= n;
+    },
+
     updateTime(dt){
         if(this.currentTime >= 0 ){
 
@@ -74,6 +100,9 @@ cc.Class({
             }
             this.showTime = this.currentTime.toFixed(1);
         }  
+        else{
+            this.gameCtrl.stopGame('dead');
+        }
     },
 
     addPower(n){
@@ -138,6 +167,12 @@ cc.Class({
                         case 1:
                             console.log(self.jsonAll[y].json.contents[x].key);
                             console.log(self.jsonAll[y].json.contents[x].boss);
+                            console.log(self.jsonAll[y].json.contents[x].bossLayout);
+                            console.log(self.jsonAll[y].json.contents[x].bossStrengthMin);
+                            console.log(self.jsonAll[y].json.contents[x].bossStrengthMax);
+                            console.log(self.jsonAll[y].json.contents[x].bossSkillNum);
+                            console.log(self.jsonAll[y].json.contents[x].missionType);
+                            console.log(self.jsonAll[y].json.contents[x].missionValue);
                             console.log(self.jsonAll[y].json.contents[x].vanguardLayout);
                             console.log(self.jsonAll[y].json.contents[x].vanguardType);
                             console.log(self.jsonAll[y].json.contents[x].vanguardStrengthMin);
