@@ -78,4 +78,8 @@ cc.Class({
     showRestartBallLabel(bool){
         this.restartBallLabel.node.active = bool;
     },
+
+    isInit(bool){
+        this.initBool = bool;
+    },
 });

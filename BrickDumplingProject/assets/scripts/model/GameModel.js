@@ -171,6 +171,7 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].bossStrengthMin);
                             console.log(self.jsonAll[y].json.contents[x].bossStrengthMax);
                             console.log(self.jsonAll[y].json.contents[x].bossSkillNum);
+                            console.log(self.jsonAll[y].json.contents[x].bossSkillStrength);
                             console.log(self.jsonAll[y].json.contents[x].missionType);
                             console.log(self.jsonAll[y].json.contents[x].missionValue);
                             console.log(self.jsonAll[y].json.contents[x].vanguardLayout);

@@ -58,6 +58,9 @@ cc.Class({
     // ; 
 
     init() {
+        //gameView未初始化（防止update提前运行）
+        this.gameView.isInit(false);
+
         this.physicsManager.enabled = true;
         this.gameModel.readJson(this);
     },
@@ -103,7 +106,7 @@ cc.Class({
         
         //关卡+1,时间+5
         this.gameModel.addStage(1);
-        this.gameModel.addTime(5);
+        this.gameModel.addTime(10);
         this.gameView.updateStage(this.gameModel.currentStage);
 
         //初始化球和板子
@@ -339,4 +342,11 @@ cc.Class({
     onDestroy() {
         this.physicsManager.enabled = false;
     },
+
+    onBrickBossSkill(brickNode,boss){
+        if(boss){
+            brickNode.getComponent(cc.Component).onSkill();
+        }
+    },
+    
 });

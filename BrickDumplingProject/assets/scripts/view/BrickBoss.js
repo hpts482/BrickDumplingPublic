@@ -5,6 +5,12 @@ cc.Class({
         bossType:0, //需要默认配置 1代表小boss，2代表大boss
     },
 
+    init(gameCtl,bossSkillNum,bossSkillStrength){
+        this.gameCtl = gameCtl;
+        this.bossSkillNum = bossSkillNum;
+        this.bossSkillStrength = bossSkillStrength;
+    },
+
     updateStr(){
         let self = this;
 
@@ -47,6 +53,20 @@ cc.Class({
     updataEmojiSpr(obj){
         this.brickSprite = new cc.SpriteFrame(obj);
         this.node.getChildByName('spr_emoji').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
+    },
+
+    onSkill(){
+        //确定技能
+        let skillNum = Math.floor(Math.random(this.bossSkillNum) + 1);
+
+        //确定技能强度
+        //进入CD
+        //开始吟唱
+        //释放技能
+    },
+
+    onDestroy(){
+        console.log('boss关闭技能');
     },
 
 });
