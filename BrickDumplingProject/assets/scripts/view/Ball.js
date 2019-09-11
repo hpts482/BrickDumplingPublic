@@ -3,6 +3,9 @@ cc.Class({
 
     properties: {
         rMinAngle:0,
+        initVelocityX:0,
+        initVelocityY:0,
+        ballSprite:cc.Sprite,
     },
 
     init(gameCtl) {
@@ -17,6 +20,26 @@ cc.Class({
         this.isActive(false);
         //this.node.position = cc.v2(375,380);//初始化位置
         //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
+    },
+
+    //通过cannon初始化速度
+    initVelocity(initType,x,y){
+        //initType 1赋值初始速度 2根据xy方向恢复初始速度 3变速
+        switch(initType){
+            case 1:
+                this.initVelocityX = x;
+                this.initVelocityY = y;
+                this.initVelocityLength = Math.sqrt(Math.pow(this.initVelocityX,2) + Math.pow(this.initVelocityY,2))
+                this.getComponent(cc.RigidBody).linearVelocity = cc.v2(x,y);
+                break;
+            case 2:
+                this.getComponent(cc.RigidBody).linearVelocity = this.getComponent(cc.RigidBody).linearVelocity.mul(this.initVelocityLength / Math.sqrt(Math.pow(x,2) + Math.pow(y,2)));
+                break;
+            case 3:
+                this.getComponent(cc.RigidBody).linearVelocity = cc.v2(x,y);
+                break;  
+        }
+        
     },
 
     onBeginContact(contact, self, other) {
@@ -52,7 +75,7 @@ cc.Class({
         let rChange = 0;
         
         //出现减速bug时(碰撞穿插导致)，判为输
-        if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < 0.9 * Math.sqrt(Math.pow(500,2) + Math.pow(500,2))){
+        if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < 0.9 * this.initVelocityLength){
             this.gameCtl.stopGame('dead');
             console.log('---------------------速度过慢，死亡！' + this.getComponent(cc.RigidBody).linearVelocity);
         }
@@ -122,7 +145,33 @@ cc.Class({
         this.node.setScale(powerOnBool==true?1.5:1);
     },
 
+    bossSkillBallQuick(bool,VelocityNum){
+        if(bool){
+            //加速
+            this.ballQuickBool = true;
+            this.VelocityNum = VelocityNum;
+            this.initVelocity(3,this.getComponent(cc.RigidBody).linearVelocity.mul(VelocityNum).x,this.getComponent(cc.RigidBody).linearVelocity.mul(VelocityNum).y)
+            this.setColor(new cc.Color(255,0,0));
+            console.log('***************加速啦！！***************当前速度' +  this.getComponent(cc.RigidBody).linearVelocity);
+        }
+        else{
+            //恢复速度
+            this.ballQuickBool = false;
+            //根据方向恢复到原来的速度
+            this.initVelocity(2,this.getComponent(cc.RigidBody).linearVelocity.x,this.getComponent(cc.RigidBody).linearVelocity.y);
+            this.setColor(new cc.Color(255,255,255));
+            console.log('********************减速啦！！********************当前速度' +  this.getComponent(cc.RigidBody).linearVelocity);
+
+            this.gameCtl.brickBossSkillFin();
+        }
+    },
+
+    setColor(color){
+        this.ballSprite.node.color = color;
+    },
+
     isActive(bool){
         this.node.active = bool;
     },
+
 });

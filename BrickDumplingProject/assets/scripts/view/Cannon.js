@@ -27,7 +27,7 @@ cc.Class({
         if(this.type == 1){
             //调整主球位置并显示
             this.gameCtl.ball.node.position = cc.v2(this.ballPositionX,this.ballPositionY);
-            this.gameCtl.ball.getComponent(cc.RigidBody).linearVelocity = cc.v2(this.ballLinearVelocityX,this.ballLinearVelocityY);
+            this.gameCtl.ball.initVelocity(1,this.ballLinearVelocityX,this.ballLinearVelocityY);
             this.gameCtl.ball.isActive(true);
 
             //this.node.position = cc.v2(375,380);//初始化位置

@@ -57,7 +57,7 @@ cc.Class({
             this.brickStrBoss(brickNode,boss);
 
             //开始技能
-            this.gameCtl.onBrickBossSkill(brickNode,boss);
+            this.gameCtl.onBrickBossSkill(brickNode);
 
             //布置小boss陪衬
             switch(layout){
@@ -104,7 +104,7 @@ cc.Class({
             this.brickStrBoss(brickNode,boss);
 
             //开始技能
-            this.gameCtl.onBrickBossSkill(brickNode,boss);
+            this.gameCtl.onBrickBossSkill(brickNode);
 
             //布置大boss陪衬
             switch(layout){

@@ -14,6 +14,7 @@ cc.Class({
         itemPrefab:cc.Prefab,
         cannonPrefab:cc.Prefab,
         powerOnBool:false, // 能量开启的开关
+        bossSkillOnNum:0,// boss是否正在释放持续技能
     },
 
     // use this for initialization
@@ -68,6 +69,9 @@ cc.Class({
     initAfter(){
         //初始化能量
         this.powerOnBool = false; 
+        //初始化boss是否在持续释放技能
+        this.bossSkillOnNum = 0;
+
         this.powerOn();
 
         this.gameModel.init();
@@ -126,6 +130,9 @@ cc.Class({
         this.powerOnBool = false;
         this.powerOn();
 
+        //初始化boss技能释放
+        this.bossSkillOnNum = 0;
+
         //初始化关卡任务
         this.gameModel.initMission();
         this.gameView.updateMission();
@@ -183,6 +190,10 @@ cc.Class({
         else if(this.gameModel.currentMission[0] == 2){
             console.log('是不是boss？'+typeof(brickNode.getComponent(cc.Component).bossType));
             if(typeof(brickNode.getComponent(cc.Component).bossType) != 'undefined'){
+                //停止boss技能循环
+                this.offBrickBossSkill(brickNode);
+
+                //停止游戏
                 this.stopGame();
             }
         }
@@ -193,6 +204,12 @@ cc.Class({
 
         //停止发球计时器
         this.unschedule(this.restartBallScheduleOnce);
+
+        //停止boss持续技能
+        if(this.bossSkillOnNum == 1){
+            this.unschedule(this.funBossSkillBallQuick);
+            this.ball.bossSkillBallQuick(false);
+        }
 
         //最后一关处理
         if(this.gameModel.currentStage >= this.gameModel.jsonAll[1].json.total){
@@ -343,9 +360,52 @@ cc.Class({
         this.physicsManager.enabled = false;
     },
 
-    onBrickBossSkill(brickNode,boss){
-        if(boss){
-            brickNode.getComponent(cc.Component).onSkill();
+    onBrickBossSkill(brickNode){
+        this.bossBrickNode = brickNode;
+        brickNode.getComponent(cc.Component).onSkill();
+    },
+
+    offBrickBossSkill(brickNode){
+        brickNode.getComponent(cc.Component).offSkill();
+    },
+
+    brickBossSkill(brickNode,skillNum,skillStrength){
+        switch(skillNum){
+            //1、暂时加速。2、强化前锋。3、减能量。4、砖块雨。5、生成底排屏障。6、反向反弹。7、增加所有砖块护甲
+            case 1:
+                //开启持续技能开关
+                this.bossSkillOnNum = 1;
+                //赋值加速速度倍率和持续时间
+                let VelocityNum = 1 + skillStrength * 0.1;
+                let VelocityTime = Math.floor (3 + skillStrength * 0.5);
+                console.log('**********开始brickBossSkill(ctrl)*************开关：'+this.bossSkillOnNum + '速度：'+ VelocityNum + '持续时间' + VelocityTime);
+                //执行加速
+                this.ball.bossSkillBallQuick(true,VelocityNum);
+                //持续时间后自动恢复
+                this.funBossSkillBallQuick = function(){
+                    this.ball.bossSkillBallQuick(false);
+                }
+                this.scheduleOnce(this.funBossSkillBallQuick,VelocityTime);
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+        }
+    },
+
+    brickBossSkillFin(){
+        this.bossSkillOnNum = 0;
+        if(this.physicsManager.enabled){
+            this.bossBrickNode.getComponent(cc.Component).onSkill();
         }
     },
     

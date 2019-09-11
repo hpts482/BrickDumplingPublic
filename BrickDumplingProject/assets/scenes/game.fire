@@ -53,8 +53,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.3809032983508246,
-      "y": 0.3809032983508246,
+      "x": 0.4386131509220625,
+      "y": 0.4386131509220625,
       "z": 1
     },
     "_quat": {
@@ -1876,6 +1876,7 @@
       "__uuid__": "dca5fc74-306a-43e5-aa19-6e2a54233d6d"
     },
     "powerOnBool": false,
+    "bossSkillOnNum": 0,
     "_id": "3e1C1ro99FOL7q0NtQJ9d3"
   },
   {
@@ -2871,6 +2872,11 @@
     },
     "_enabled": true,
     "rMinAngle": 21,
+    "initVelocityX": 0,
+    "initVelocityY": 0,
+    "ballSprite": {
+      "__id__": 64
+    },
     "_id": "02mZLguFRI+IOIk1G3+Yom"
   },
   {
