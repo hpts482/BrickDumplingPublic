@@ -2,6 +2,8 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        combPanel: require('CombPanel'),
+
         scoreLabel:cc.Label,
         timeLabel:cc.Label,
         stageLabel:cc.Label,
@@ -13,6 +15,8 @@ cc.Class({
     },
 
     init(gameCtl,gameModel){
+        this.combPanel.init(gameCtl);
+
         this.gameCtl = gameCtl;
         this.gameModel = gameModel;
         this.scoreLabel.string = '0';

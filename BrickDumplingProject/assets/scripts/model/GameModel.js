@@ -14,6 +14,8 @@ cc.Class({
 
         power:0.0,//能量
         itemLevel:[],//对应各个道具的等级
+
+        combNum:0,//连打次数
     },
 
     init(){
@@ -26,6 +28,7 @@ cc.Class({
         this.showTime = 60.0;
 
         this.power = 0.0;
+        this.combNum = 0;
         
         //初始化各个道具的等级
         for(let i=0; i < Number(this.jsonAll[2].json.total); i++){
@@ -139,6 +142,14 @@ cc.Class({
             this.gameCtrl.powerOnBool = false;
             this.gameCtrl.powerOn();
         }
+    },
+
+    addCombNum(n){
+        this.combNum += n;
+    },
+
+    zeroCombNum(){
+        this.combNum = 0;
     },
 
     readJson(gameCtrl){

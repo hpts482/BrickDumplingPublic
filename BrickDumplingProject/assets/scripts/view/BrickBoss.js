@@ -5,6 +5,7 @@ cc.Class({
         bossType:0, //需要默认配置 1代表小boss，2代表大boss
         particleSkillPrepare:cc.ParticleSystem,
         particleSkillStart:cc.ParticleSystem,
+        aniSkill:cc.Animation,
     },
 
     init(gameCtl,bossSkillNum,bossSkillStrength){
@@ -15,6 +16,7 @@ cc.Class({
         //关闭粒子
         this.particleSkillPrepare.node.active = false;
         this.particleSkillStart.node.active = false;
+        this.aniSkill.node.active = false;
     },
 
     updateStr(){
@@ -109,7 +111,29 @@ cc.Class({
     },
 
     skillPrepare(){
-        
+        //打开动画
+        this.aniSkill.node.active = true;
+        this.aniSkill.play('bossSkill');
+        console.log('**********开始skillPrepare*************已显示第一个特效，倒计时：' + Math.floor(4-this.skillStrength/3));
+
+        //依次显示3次动画
+        this.scheduleOnce(function() {
+            //第二次显示动画
+            console.log('**********已显示第二个特效*************，倒计时：' + Math.floor(3-this.skillStrength/3));
+            this.aniSkill.play('bossSkill');
+            this.scheduleOnce(function() {
+                //第三次显示粒子
+                console.log('**********显示第三个特效*************');
+                this.aniSkill.play('bossSkill');
+                this.scheduleOnce(function() {
+                    //准备释放技能
+                    this.loopNum++;
+                    this.skillLoop();
+                }, Math.floor(1));
+            }, Math.floor(3-this.skillStrength/3));
+        }, Math.floor(4-this.skillStrength/3));
+
+        /*
         //打开准备粒子
         this.particleSkillPrepare.node.active = true;
         this.particleSkillPrepare.resetSystem();
@@ -131,13 +155,19 @@ cc.Class({
                 }, Math.floor(1));
             }, Math.floor(3-this.skillStrength/3));
         }, Math.floor(4-this.skillStrength/3));
+        */
     },
 
     skillStart(){
         console.log('**********开始skillStart*************显示特效');
+
+        //播放动画
+        this.aniSkill.play('bossSkillStart');
+        /*
         //打开释放粒子
         this.particleSkillStart.node.active = true;
         this.particleSkillStart.resetSystem();
+        */
 
         //释放技能
         this.loopNum++;

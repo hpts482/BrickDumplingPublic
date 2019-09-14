@@ -113,6 +113,10 @@ cc.Class({
         this.gameModel.addTime(10);
         this.gameView.updateStage(this.gameModel.currentStage);
 
+        //清空comb
+        this.gameView.combPanel.fin();
+        this.gameModel.zeroCombNum();
+
         //初始化球和板子
         this.ball.initNextStage();
         this.paddle.initNextStage();
@@ -142,6 +146,8 @@ cc.Class({
 
         //发球
         this.startCannon(1);
+
+
     },
 
     //生成炮台
@@ -251,6 +257,9 @@ cc.Class({
         //增加能量
         this.gameModel.addPower(50);
         this.gameView.updatePower(this.gameModel.power);
+
+        //增加comb
+        this.onComb(true);
     },
 
     onBallContactGround(ballNode, groundNode) {
@@ -270,10 +279,14 @@ cc.Class({
             this.startCannon(1);
         }
         this.scheduleOnce(this.restartBallScheduleOnce,2);
+
+        //取消comb
+        this.onComb(false);
     },
 
     onBallContactPaddle(ballNode, paddleNode) {
-
+        //取消comb
+        this.onComb(false);
     },
 
     onBallContactWall(ballNode, brickNode) {
@@ -281,7 +294,8 @@ cc.Class({
     },
 
     onBallContactSecurity(ballNode, brickNode) {
-
+        //取消comb
+        this.onComb(false);
     },
 
     /*onItemContactBall(itemNode, ball) {
@@ -356,19 +370,18 @@ cc.Class({
         }
     },
 
-    onDestroy() {
-        this.physicsManager.enabled = false;
-    },
-
+    //开启boss技能
     onBrickBossSkill(brickNode){
         this.bossBrickNode = brickNode;
         brickNode.getComponent(cc.Component).onSkill();
     },
 
+    //关闭boss技能
     offBrickBossSkill(brickNode){
         brickNode.getComponent(cc.Component).offSkill();
     },
 
+    //boss技能列表
     brickBossSkill(brickNode,skillNum,skillStrength){
         switch(skillNum){
             //1、暂时加速。2、强化前锋。3、减能量。4、砖块雨。5、生成底排屏障。6、反向反弹。7、增加所有砖块护甲
@@ -402,11 +415,36 @@ cc.Class({
         }
     },
 
+    //boss技能释放完毕
     brickBossSkillFin(){
         this.bossSkillOnNum = 0;
         if(this.physicsManager.enabled){
             this.bossBrickNode.getComponent(cc.Component).onSkill();
         }
+    },
+
+    //comb逻辑
+    onComb(type){
+        //type：true 代表+1comb，false代表停止comb
+        if(type){
+            this.gameModel.addCombNum(1);
+            if(this.gameModel.combNum == 2){
+                this.gameView.combPanel.on();
+            }
+            else if(this.gameModel.combNum > 2){
+                this.gameView.combPanel.again(); 
+            }
+        }
+        else{
+            if(this.gameModel.combNum >= 2){
+                this.gameView.combPanel.fin();
+            }
+            this.gameModel.zeroCombNum();
+        }
+    },
+    
+    onDestroy() {
+        this.physicsManager.enabled = false;
     },
     
 });
