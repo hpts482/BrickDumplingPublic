@@ -1,4 +1,5 @@
 const GameModel = require('GameModel');
+var AudioManager = require('AudioManager');
 cc.Class({
     extends: cc.Component,
 
@@ -11,6 +12,7 @@ cc.Class({
         shopPanel:require('ShopPanel'),
         security:require('Security'),
         pausePanel:require('PausePanel'),
+        AudioParam:require('AudioParam'),
         itemPrefab:cc.Prefab,
         cannonPrefab:cc.Prefab,
         powerOnBool:false, // 能量开启的开关
@@ -46,6 +48,7 @@ cc.Class({
         });
         this.physicsManager = cc.director.getPhysicsManager();
         this.gameModel = new GameModel();
+        this.audioMgr = new AudioManager();
         this.startGame();
 
     },
@@ -61,7 +64,7 @@ cc.Class({
     init() {
         //gameView未初始化（防止update提前运行）
         this.gameView.isInit(false);
-
+        this.audioMgr.Init(this);
         this.physicsManager.enabled = true;
         this.gameModel.readJson(this);
     },
@@ -96,6 +99,7 @@ cc.Class({
     isShop(){
         if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage - 1].boss) > 0){
             this.shopPanel.show(this.gameModel);
+            this.audioMgr.PlaySoundClip(this.AudioParam.BallServe);
         }
         else{
             this.initNextStage();
@@ -160,6 +164,7 @@ cc.Class({
     //发球或发辅助球，参数1代表主球，参数2代表辅球
     startCannon(type){
         this.cannonNode.getComponent(cc.Component).serveBall(type);
+        this.audioMgr.PlaySoundClip(this.AudioParam.BallServe);
     },
 
     startGame() {
@@ -174,6 +179,7 @@ cc.Class({
 
             //显示暂停界面
             this.pausePanel.show();
+            this.audioMgr.PlaySoundClip(this.AudioParam.PanelPause);
         }
         else{
             cc.director.resume();
@@ -227,11 +233,13 @@ cc.Class({
         else if (type === 'dead'){
             console.log('四啦！');
             this.overPanel.show(this.gameModel.score, false);
+            this.audioMgr.PlaySoundClip(this.AudioParam.PanelFail);
         }
 
         //进入下一关处理
         else{
             this.overPanel.show(this.gameModel.score, true);
+            this.audioMgr.PlaySoundClip(this.AudioParam.PanelWin);
         }
 
     },
@@ -260,6 +268,8 @@ cc.Class({
 
         //增加comb
         this.onComb(true);
+
+        this.audioMgr.PlaySoundClip(this.AudioParam.BallHitBrick);
     },
 
     onBallContactGround(ballNode, groundNode) {
@@ -287,15 +297,17 @@ cc.Class({
     onBallContactPaddle(ballNode, paddleNode) {
         //取消comb
         this.onComb(false);
+        this.audioMgr.PlaySoundClip(this.AudioParam.BallHitPaddle);
     },
 
     onBallContactWall(ballNode, brickNode) {
-
+        this.audioMgr.PlaySoundClip(this.AudioParam.BallHitWall);
     },
 
     onBallContactSecurity(ballNode, brickNode) {
         //取消comb
         this.onComb(false);
+        this.audioMgr.PlaySoundClip(this.AudioParam.BallHitWall);
     },
 
     /*onItemContactBall(itemNode, ball) {
@@ -349,6 +361,7 @@ cc.Class({
                     this.security.show(securityTime);
             }
         }
+        this.audioMgr.PlaySoundClip(this.AudioParam.SkillGet);
     },
 
     instItem(position){
@@ -374,6 +387,7 @@ cc.Class({
     onBrickBossSkill(brickNode){
         this.bossBrickNode = brickNode;
         brickNode.getComponent(cc.Component).onSkill();
+        this.audioMgr.PlaySoundClip(this.AudioParam.BossSkill);
     },
 
     //关闭boss技能
