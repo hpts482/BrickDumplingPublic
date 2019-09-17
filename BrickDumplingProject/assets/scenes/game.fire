@@ -56,8 +56,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.4091500244140625,
-      "y": 0.4091500244140625,
+      "x": 0.6085013596821107,
+      "y": 0.6085013596821107,
       "z": 1
     },
     "_quat": {
@@ -1982,6 +1982,9 @@
     },
     "AudioParam": {
       "__id__": 3
+    },
+    "scoreManager": {
+      "__id__": 178
     },
     "itemPrefab": {
       "__uuid__": "fbfa96c9-ee7c-47c9-888f-ef084c21b93b"
@@ -7572,13 +7575,17 @@
     "customEventData": ""
   },
   {
-    "__type__": "435aaHzH09OBIkX2m+Ihgqg",
+    "__type__": "3bbe2+AX/ZKgpEgIO4pq6K0",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 4
     },
-    "_enabled": false,
-    "_id": "fa1hrN67NINrx4fkB8tsgU"
+    "_enabled": true,
+    "scoreBrick": 50,
+    "scoreCombParam": 5,
+    "scoreItem": 10,
+    "scoreTime": 10,
+    "_id": "cbFRvQH/hCPIFnjSrQ11ZE"
   }
 ]

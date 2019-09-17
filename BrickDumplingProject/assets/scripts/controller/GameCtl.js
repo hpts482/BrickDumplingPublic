@@ -13,6 +13,7 @@ cc.Class({
         security:require('Security'),
         pausePanel:require('PausePanel'),
         AudioParam:require('AudioParam'),
+        scoreManager:require('ScoreManager'),
         itemPrefab:cc.Prefab,
         cannonPrefab:cc.Prefab,
         powerOnBool:false, // 能量开启的开关
@@ -64,8 +65,11 @@ cc.Class({
     init() {
         //gameView未初始化（防止update提前运行）
         this.gameView.isInit(false);
+
         this.audioMgr.Init(this);
+        this.scoreManager.init(this);
         this.physicsManager.enabled = true;
+
         this.gameModel.readJson(this);
     },
 
@@ -98,6 +102,10 @@ cc.Class({
     //是否显示商店
     isShop(){
         if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage - 1].boss) > 0){
+            //减时间并加分
+            this.scoreManager.addScoreTime();
+
+            //显示商店界面
             this.shopPanel.show(this.gameModel);
             this.audioMgr.PlaySoundClip(this.AudioParam.BallServe);
         }
@@ -108,8 +116,7 @@ cc.Class({
 
     //下个关卡初始化
     initNextStage(){ 
-        //加分并显示
-        this.gameModel.addScore(500);
+        //显示分数
         this.gameView.updateScore(this.gameModel.score);
         
         //关卡+1,时间+5
@@ -238,6 +245,8 @@ cc.Class({
 
         //进入下一关处理
         else{
+            //加分-关卡
+            this.scoreManager.addScoreStage();
             this.overPanel.show(this.gameModel.score, true);
             this.audioMgr.PlaySoundClip(this.AudioParam.PanelWin);
         }
@@ -251,7 +260,7 @@ cc.Class({
         if(brickStr<=0){
             brickNode.parent = null;
             brickNode.destroy();
-            this.gameModel.addScore(1);
+            this.scoreManager.addScoreBrick();
             this.gameModel.minusBrick(1);
             this.gameView.updateScore(this.gameModel.score);
             
@@ -360,8 +369,12 @@ cc.Class({
                     }
                     this.security.show(securityTime);
             }
+            //加分并更新
+            this.scoreManager.addScoreItem();
+            this.gameView.updateScore(this.gameModel.score);
+
+            this.audioMgr.PlaySoundClip(this.AudioParam.SkillGet);
         }
-        this.audioMgr.PlaySoundClip(this.AudioParam.SkillGet);
     },
 
     instItem(position){

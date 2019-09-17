@@ -197,6 +197,7 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].guardStrengthMax);
                             console.log(self.jsonAll[y].json.contents[x].guardNumMin);
                             console.log(self.jsonAll[y].json.contents[x].guardNumMax);
+                            console.log(self.jsonAll[y].json.contents[x].score);
                         case 2:
                             console.log(self.jsonAll[y].json.contents[x].key);
                             console.log(self.jsonAll[y].json.contents[x].type);
