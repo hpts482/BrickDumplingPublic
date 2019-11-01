@@ -10,6 +10,7 @@ cc.Class({
         goldLabel:cc.Label,
         missionLabel:cc.Label,
         powerProgress:cc.ProgressBar,
+        powerProgressTex:cc.ProgressBar,
         restartBallLabel:cc.Label,
         initBool:false,
     },
@@ -29,6 +30,9 @@ cc.Class({
 
         this.updatePower(this.gameModel.power);
         this.updateMission(); //刷新任务
+
+        //恢复时间字体颜色
+        this.colTime(new cc.Color(49,38,38));
     },
 
     update(dt){
@@ -37,6 +41,15 @@ cc.Class({
                 //更新时间
                 this.gameModel.updateTime(dt);
                 this.timeLabel.string = (this.gameModel.currentTime <= 0.0)?('0.0'):(this.gameModel.showTime);
+
+                //时间不够字体变色
+                if(this.gameModel.showTime < this.gameModel.timeCountDown){
+                    this.colTime(new cc.Color(237,47,47));
+                    //若时钟未开启，则开启时钟
+                    if(!this.gameCtl.countDownBool){
+                        this.gameCtl.startCountDown();
+                    }
+                }
 
                 //powerOn时更新能量条
                 if(this.gameCtl.powerOnBool){
@@ -53,6 +66,8 @@ cc.Class({
 
     updatePower(power){
         this.powerProgress.progress = power;
+        this.powerProgressTex.progress = power;
+
     },
 
     updateStage(stage){
@@ -77,6 +92,10 @@ cc.Class({
 
     colPower(color){
         this.powerProgress.node.getChildByName('bar').color = color;
+    },
+
+    colTime(color){
+        this.timeLabel.node.color = color;
     },
 
     showRestartBallLabel(bool){

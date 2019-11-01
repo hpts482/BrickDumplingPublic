@@ -297,6 +297,13 @@
     "ballPositionY": 205,
     "ballLinearVelocityX": 500,
     "ballLinearVelocityY": 500,
+    "ballExtraPrefab": {
+      "__uuid__": "b6979263-ba0e-4b8c-889f-55a5a5da51d1"
+    },
+    "ballExtraPositionX": 620,
+    "ballExtraPositionY": 205,
+    "ballExtraLinearVelocityX": -500,
+    "ballExtraLinearVelocityY": 500,
     "_id": ""
   },
   {
@@ -339,6 +346,9 @@
     "_clips": [
       {
         "__uuid__": "cd990d2e-78c7-4f48-946e-a6050e06d03b"
+      },
+      {
+        "__uuid__": "08d50eeb-91da-40e2-adb2-aa2e371796d6"
       }
     ],
     "playOnLoad": false,

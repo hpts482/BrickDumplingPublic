@@ -3,25 +3,25 @@ cc.Class({
 
     properties: {
         shopItemPrice:cc.Label,
+        itemSpriteNode:cc.Node, //图片节点
         shopItemSprite:cc.Sprite,
         sprGold:cc.Sprite,
-        sprSoldOut:cc.Sprite,
         isBuy:false,
         isLevelMax:false,
     },
 
-    init(gameCtl,shopItemContents,shopPanel){
+    init(gameCtl,shopItemShow,shopPanel,pos){
         this.gameCtl = gameCtl;
-        //【id\当前等级\升级价格】
-        this.shopItemContents = shopItemContents;
+        //【id\type\当前等级\升级价格】
+        this.shopItemShow = shopItemShow;
         this.shopPanel = shopPanel;
+        this.pos = pos;
 
         //显示价格
-        this.shopItemPrice.string = shopItemContents[2];
-        this.sprSoldOut.node.active = false;
+        this.shopItemPrice.string = shopItemShow[3] > 0 ? 'x'+shopItemShow[3] : 'Max';
 
         //显示图片
-        this.updateSpr(shopItemContents[0]);
+        this.updateSpr(shopItemShow[0]);
     },
 
     updateSpr(type){
@@ -37,17 +37,16 @@ cc.Class({
             }
 
             self.shopItemSprite = new cc.SpriteFrame(obj);
-            self.node.getComponent(cc.Sprite).spriteFrame = self.shopItemSprite;
+            self.itemSpriteNode.getComponent(cc.Sprite).spriteFrame = self.shopItemSprite;
         });
     },
 
     onBtnBuy(){
-        this.shopPanel.showItemPanel(this.shopItemContents,this.shopItemSprite,this);
+        this.shopPanel.showItemPanel(this.shopItemShow,this.shopItemSprite,this);
     },
 
     soldOut(){
         this.sprGold.node.active = false;
-        this.sprSoldOut.node.active = true;
     },
 
 });

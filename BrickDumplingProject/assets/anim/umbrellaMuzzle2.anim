@@ -1,0 +1,70 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "umbrellaMuzzle2",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.65,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "paths": {
+      "paddleUmbrella": {
+        "props": {
+          "rotation": [
+            {
+              "frame": 0,
+              "value": 0,
+              "curve": "cubicIn"
+            },
+            {
+              "frame": 0.06666666666666667,
+              "value": -35
+            },
+            {
+              "frame": 0.5666666666666667,
+              "value": 35,
+              "curve": "cubicOut"
+            },
+            {
+              "frame": 0.65,
+              "value": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": [
+    {
+      "frame": 0.06666666666666667,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    },
+    {
+      "frame": 0.16666666666666666,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    },
+    {
+      "frame": 0.26666666666666666,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    },
+    {
+      "frame": 0.36666666666666664,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    },
+    {
+      "frame": 0.4666666666666667,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    },
+    {
+      "frame": 0.5666666666666667,
+      "func": "ainmUmbrellaMuzzle2",
+      "params": []
+    }
+  ]
+}

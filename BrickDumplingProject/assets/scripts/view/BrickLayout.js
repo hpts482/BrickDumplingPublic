@@ -2,17 +2,32 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        padding: 0,
-        spacing: 0,
-        cols: 0,
+        padding: 0, //距离边缘
+        spacing: 0, //间隔
+        cols: 0,    //一行几个
         brickPrefab: cc.Prefab,
         brickBossSmallPrefab:cc.Prefab,
         brickBossBigPrefab:cc.Prefab,
         bricksNumber:0,
+
+        //不同位置的砖块节点
+        vanguardLayoutNode:cc.Node,
+        guardLayoutNode:cc.Node,
+        bossLayoutNode:cc.Node,
+        otherLayoutNode:cc.Node,
+        itemLayoutNode:cc.Node,
+        progressSkillThunderLayout:cc.Node,
     },
 
     init(gameModel,jsonAll,currentStage,gameCtl) {
-        this.node.removeAllChildren();
+        //删除子节点的所有砖块
+        this.vanguardLayoutNode.removeAllChildren();
+        this.guardLayoutNode.removeAllChildren();
+        this.bossLayoutNode.removeAllChildren();
+        this.otherLayoutNode.removeAllChildren();
+        this.itemLayoutNode.removeAllChildren();
+        this.progressSkillThunderLayout.removeAllChildren();
+
         this.gameCtl = gameCtl;
         this.jsonAll = jsonAll;
         this.currentStage = currentStage;
@@ -48,7 +63,7 @@ cc.Class({
         //布置小boss
         if(boss===1){
             let brickNode = cc.instantiate(this.brickBossSmallPrefab);
-            brickNode.parent = this.node;
+            brickNode.parent = this.bossLayoutNode;
             brickNode.getComponent(cc.Component).init(this.gameCtl,bossSkillNum,bossSkillStrength);
 
             brickNode.x = this.padding + 3 * (brickNode.width/2 + this.spacing) + brickNode.width / 2;
@@ -63,10 +78,11 @@ cc.Class({
             switch(layout){
                 //方形阵
                 case 1:
+                    this.isNotBossNum = this.cols*2+4;
                     for (let i = 0; i < (this.cols*2+4); i++) {
                         let brickNode = cc.instantiate(this.brickPrefab);
-                        brickNode.parent = this.node;
-                        brickNode.getComponent(cc.Component).init(this.gameCtl);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
 
                         //第一行
                         if(i<this.cols){
@@ -86,6 +102,7 @@ cc.Class({
                             brickNode.y = -this.padding - Math.floor((i-this.cols*2) /2 +7)*(brickNode.height + this.spacing) - brickNode.height / 2;
                         }
 
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
                         this.brickStrBoss(brickNode,0);
                         }
                     break;
@@ -95,7 +112,7 @@ cc.Class({
         //布置大boss
         else if(boss===2){
             let brickNode = cc.instantiate(this.brickBossBigPrefab);
-            brickNode.parent = this.node;
+            brickNode.parent = this.bossLayoutNode;
             brickNode.getComponent(cc.Component).init(this.gameCtl,bossSkillNum,bossSkillStrength);
 
             brickNode.x = this.padding + 3 * (brickNode.width/2 + this.spacing) + brickNode.width / 2;
@@ -110,10 +127,11 @@ cc.Class({
             switch(layout){
                 //菱形阵
                 case 1:
+                    this.isNotBossNum =(this.cols/2*2+4);
                     for (let i = 0; i < (this.cols/2*2+4); i++) {
                         let brickNode = cc.instantiate(this.brickPrefab);
-                        brickNode.parent = this.node;
-                        brickNode.getComponent(cc.Component).init(this.gameCtl);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
 
                         //第一行
                         if(i<this.cols/2){
@@ -132,7 +150,8 @@ cc.Class({
                             brickNode.x = this.padding + (((i-this.cols) % 2) *(this.cols-3)+1)* (brickNode.width + this.spacing) + brickNode.width / 2;
                             brickNode.y = -this.padding - Math.floor((i-this.cols) /2 +7)*(brickNode.height + this.spacing) - brickNode.height / 2;
                         }
-
+                        
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
                         this.brickStrBoss(brickNode,0);
                         }
                     break;
@@ -151,11 +170,13 @@ cc.Class({
                     this.isNotBossNum = 4;
                     for (let i = 0; i < this.isNotBossNum; i++) {
                         let brickNode = cc.instantiate(this.brickPrefab);
-                        brickNode.parent = this.node;
-                        brickNode.getComponent(cc.Component).init(this.gameCtl);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
         
                         brickNode.x = this.padding + ((i % 2) * (this.cols-3)+1)* (brickNode.width + this.spacing) + brickNode.width / 2;
                         brickNode.y = -this.padding - Math.floor( i /2 +7)*(brickNode.height + this.spacing) - brickNode.height / 2;
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
                         this.brickStrBoss(brickNode,0);
                     }
                     break;
@@ -169,8 +190,8 @@ cc.Class({
             case 1:
                 for (let i = 0; i < brickNum; i++) {
                     let brickNode = cc.instantiate(this.brickPrefab);
-                    brickNode.parent = this.node;
-                    brickNode.getComponent(cc.Component).init(this.gameCtl);
+                    brickNode.parent = this.vanguardLayoutNode;
+                    brickNode.getComponent(cc.Component).init(this.gameCtl,1);
 
                     brickNode.x = this.padding + (i % this.cols) * (brickNode.width + this.spacing) + brickNode.width / 2;
                     //间距 + 0*（宽度+间距） + 宽度/2    10+0*(90+2)+90/2 = 55 147 
@@ -178,15 +199,17 @@ cc.Class({
                     brickNode.y = -this.padding - Math.floor((i+this.cols*10) / this.cols) * (brickNode.height + this.spacing) - brickNode.height / 2;
                     //-间距 - 下取整（0/10）* （高度 + 间距） - 高度/2 -10 - 0 * （28 + 10）-28/2
                     //-间距 - 下取整（1/10）* （高度 + 间距） - 高度/2 -10 - 0 * （28 + 10）-28/2
+                    brickNode.getComponent(cc.Component).updataRigidPositon();
                     this.brickStrVan(brickNode);
                 }            
                 break;
             default:
                 let brickNode = cc.instantiate(this.brickPrefab);
-                brickNode.parent = this.node;
-                brickNode.getComponent(cc.Component).init(this.gameCtl);
+                brickNode.parent = this.vanguardLayoutNode;
+                brickNode.getComponent(cc.Component).init(this.gameCtl,1);
 
                 brickNode.position = cc.v2(375,-667);
+                brickNode.getComponent(cc.Component).updataRigidPositon();
                 break;
         }
         
@@ -198,8 +221,8 @@ cc.Class({
             case 1:
                 for (let i = 0; i < brickNum; i++) {
                     let brickNode = cc.instantiate(this.brickPrefab);
-                    brickNode.parent = this.node;
-                    brickNode.getComponent(cc.Component).init(this.gameCtl);
+                    brickNode.parent = this.guardLayoutNode;
+                    brickNode.getComponent(cc.Component).init(this.gameCtl,2);
 
                     brickNode.x = this.padding + (i % this.cols) * (brickNode.width + this.spacing) + brickNode.width / 2;
                     //间距 + 0*（宽度+间距） + 宽度/2   10+ 0 * (56+10) + 28/2
@@ -207,17 +230,19 @@ cc.Class({
                     brickNode.y = -this.padding - Math.floor(i / this.cols) * (brickNode.height + this.spacing) - brickNode.height / 2;
                     //-间距 - 下取整（0/10）* （高度 + 间距） - 高度/2
                     //-间距 - 下取整（1/10）* （高度 + 间距） - 高度/2
+                    brickNode.getComponent(cc.Component).updataRigidPositon();
                     this.brickStrGua(brickNode);
 
                 }
                 break;
             default:
                 let brickNode = cc.instantiate(this.brickPrefab);
-                brickNode.parent = this.node;
-                brickNode.getComponent(cc.Component).init(this.gameCtl);
+                brickNode.parent = this.guardLayoutNode;
+                brickNode.getComponent(cc.Component).init(this.gameCtl,2);
                 
                 //brickNode.position = cc.v2(300,-300);
                 brickNode.position = cc.v2((this.node.x + this.node.width/2),-(this.node.y - this.node.height/2)+200);
+                brickNode.getComponent(cc.Component).updataRigidPositon();
                 console.log(brickNode.position);
                 break;
         }
@@ -255,6 +280,25 @@ cc.Class({
         //console.log('随机强度 gua' + this.brickRandomStrGua);
         //赋值强度
         brickNode.getComponent(cc.Component).setStr(this.brickRandomStrGua);
+    },
+
+    //生成随机砖块
+    bossSkillInstRanBrick(skillStrength){
+        let brickNode = cc.instantiate(this.brickPrefab);
+        brickNode.parent = this.otherLayoutNode;
+        brickNode.getComponent(cc.Component).init(this.gameCtl,99);
+
+        brickNode.x = Math.floor(Math.random()*(750-(2*this.padding + brickNode.width))) + this.padding + brickNode.width / 2; 
+        brickNode.y = -Math.floor(Math.random()*(brickNode.height+this.spacing)*14 + this.padding + brickNode.height / 2 );
+
+        brickNode.getComponent(cc.Component).updataRigidPositon();
+        
+        //设置强度
+        brickNode.getComponent(cc.Component).setStr(skillStrength);
+
+        //播放动画
+        brickNode.getComponent(cc.Component).animBossSkill();
+
     },
 
 });

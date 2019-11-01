@@ -1,0 +1,41 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "countDown",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 2,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": "2",
+  "curveData": {
+    "props": {
+      "rotation": [
+        {
+          "frame": 0,
+          "value": 0,
+          "curve": "cubicOut"
+        },
+        {
+          "frame": 0.5,
+          "value": 30,
+          "curve": "cubicIn"
+        },
+        {
+          "frame": 1,
+          "value": 0,
+          "curve": "cubicOut"
+        },
+        {
+          "frame": 1.5,
+          "value": -30,
+          "curve": "cubicIn"
+        },
+        {
+          "frame": 2,
+          "value": 0
+        }
+      ]
+    }
+  },
+  "events": []
+}

@@ -17,5 +17,4 @@ var AudioManager = cc.Class({
         }
     },
 
-    
 });

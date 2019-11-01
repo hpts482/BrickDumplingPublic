@@ -23,8 +23,8 @@ cc.Class({
         let self = this;
 
         //获取砖块颜色、获取表情    6代表颜色砖块最大强度
-        let brickEmojiNum = Math.floor((this.Strength - 1) / 6) + 1;
-        let brickSprNum = ((this.Strength - 1) % 6) + 1;
+        let brickEmojiNum = Math.floor((this.strength - 1) / 6) + 1;
+        let brickSprNum = ((this.strength - 1) % 6) + 1;
 
         //显示砖块
         let urlSpr = String('dyTexture/brick/brickBoss_'+brickSprNum);
@@ -66,7 +66,9 @@ cc.Class({
     //开始技能
     onSkill(){
         //确定技能
-        this.skillNum = Math.floor(Math.random(this.bossSkillNum) + 1);
+        //this.skillNum = Math.floor(Math.random()*this.bossSkillNum + 1);
+        this.skillNum = Math.floor(Math.random()*3 + 1);
+        //this.skillNum = 3;
 
         //确定技能强度
         this.skillStrength = this.bossSkillStrength;

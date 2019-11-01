@@ -6,11 +6,15 @@ cc.Class({
         initVelocityX:0,
         initVelocityY:0,
         ballSprite:cc.Sprite,
+        progressSkillThunderShow:cc.Prefab,
     },
 
     init(gameCtl) {
         this.gameCtl = gameCtl;
         this.isActive(false);
+        this.ranProgressSkillNum();
+        this.thunderOn = false; //闪电效果
+        this.bombOn = false;    //爆炸效果
         //this.node.position = cc.v2(375,380);//初始化位置
         //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
     },
@@ -18,6 +22,8 @@ cc.Class({
     //下一关初始化
     initNextStage() {
         this.isActive(false);
+        this.thunderOn = false; //闪电效果
+        this.bombOn = false;    //爆炸效果
         //this.node.position = cc.v2(375,380);//初始化位置
         //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(500,500);//初始化速度
     },
@@ -45,7 +51,14 @@ cc.Class({
     onBeginContact(contact, self, other) {
         switch (other.tag) {
             case 1://球碰到砖块
-                this.gameCtl.onBallContactBrick(self.node, other.node);
+                this.gameCtl.onBallContactBrick(self.node, other.node.parent);
+                //判断是否有球的技能效果
+                if(this.thunderOn){
+                    this.gameCtl.progressSkillThunder(self.node, other.node.parent);
+                }
+                else if(this.bombOn){
+                    
+                }
                 break;
             case 2://球碰到地面
                 this.gameCtl.onBallContactGround(self.node, other.node);
@@ -58,6 +71,25 @@ cc.Class({
                 break;
             case 5://球碰到保底
                 this.gameCtl.onBallContactSecurity(self.node, other.node);
+                break;
+            case 6://球碰到boss砖块
+                this.gameCtl.onBallContactBrick(self.node, other.node);
+                //判断是否有球的技能效果
+                if(this.thunderOn){
+                    this.gameCtl.progressSkillThunder(self.node, other.node);
+                }
+                else if(this.bombOn){
+                    
+                }
+                break;
+            case 8://球碰到降落伞
+                this.gameCtl.onBallContactParachute(self.node, other.node);
+                break;
+            case 10://球碰到钟摆
+                this.gameCtl.onBallContactCountDown(self.node, other.node);
+                break;
+
+            //7是额外小球，9是大球
         }
     },
 
@@ -76,8 +108,8 @@ cc.Class({
         
         //出现减速bug时(碰撞穿插导致)，判为输
         if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < 0.9 * this.initVelocityLength){
-            this.gameCtl.stopGame('dead');
-            console.log('---------------------速度过慢，死亡！' + this.getComponent(cc.RigidBody).linearVelocity);
+            this.gameCtl.onBallContactGround(this.node);
+            console.log('---------------------速度过慢，重新发球！' + this.getComponent(cc.RigidBody).linearVelocity);
         }
 
         //纠正角度过小的问题
@@ -112,10 +144,6 @@ cc.Class({
             console.log('纠正后的线速度为：' + this.getComponent(cc.RigidBody).linearVelocity);
         }
 
-        
-
-
-        
         /*   /// <summary>
         /// 旋转向量，使其方向改变，大小不变
         /// </summary>
@@ -141,9 +169,40 @@ cc.Class({
         this.getComponent(cc.RigidBody).applyLinearImpulse(this.getComponent(cc.RigidBody).linearVelocity.mul(0.5),this.node.position);
     },
 
+    //强力球
     powerBallBig(powerOnBool){
-        this.node.setScale(powerOnBool==true?1.5:1);
+        if(powerOnBool){
+            this.node.setScale(1.4);
+        }
+        else{
+            this.node.setScale(1);
+            this.ranProgressSkillNum();
+        }
     },
+
+    //闪电球
+    powerBallThunder(powerOnBool){
+        if(powerOnBool){
+            this.thunderOn = true;
+        }
+        else{
+            this.thunderOn = false;
+            this.ranProgressSkillNum();
+        }
+    },
+
+    //爆炸球
+    powerBallBomb(powerOnBool){
+        if(powerOnBool){
+            this.bombOn = true;
+        }
+        else{
+            this.bombOn = false;
+            this.ranProgressSkillNum();
+        }
+    },
+
+
 
     bossSkillBallQuick(bool,VelocityNum){
         if(bool){
@@ -172,6 +231,11 @@ cc.Class({
 
     isActive(bool){
         this.node.active = bool;
+    },
+
+    ranProgressSkillNum(){
+        this.progressSkillNum = 2;
+        //this.progressSkillNum = Math.floor(Math.random()*3 + 1);
     },
 
 });

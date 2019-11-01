@@ -1,0 +1,95 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "itemSafe",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 10,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": "2",
+  "curveData": {
+    "paths": {
+      "spr_emoji1": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -717,
+                0
+              ]
+            },
+            {
+              "frame": 10,
+              "value": [
+                -375,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "spr_emoji2": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -375,
+                0
+              ]
+            },
+            {
+              "frame": 10,
+              "value": [
+                -33,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "spr_emoji3": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                -33,
+                0
+              ]
+            },
+            {
+              "frame": 10,
+              "value": [
+                309,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "spr_emoji4": {
+        "props": {
+          "position": [
+            {
+              "frame": 0,
+              "value": [
+                309,
+                0
+              ]
+            },
+            {
+              "frame": 10,
+              "value": [
+                651,
+                0
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

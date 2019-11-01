@@ -16,6 +16,8 @@ cc.Class({
         itemLevel:[],//对应各个道具的等级
 
         combNum:0,//连打次数
+
+        timeCountDown:0,//倒计时状态需要时间
     },
 
     init(){
@@ -29,14 +31,14 @@ cc.Class({
 
         this.power = 0.0;
         this.combNum = 0;
+
+        this.timeCountDown = 10;
         
         //初始化各个道具的等级
         for(let i=0; i < Number(this.jsonAll[2].json.total); i++){
             this.itemLevel[i] = 0;
         }
 
-        //初始化关卡任务
-        this.initMission();
     },
 
     initBrickNum(brickNum){
@@ -54,6 +56,8 @@ cc.Class({
         }
         //打倒boss
         else if(type == 2){
+            //每个砖块价值value金币数量
+            value = value / this.bricksNumber;
         }
         this.currentMission = [type,value,current];
     },
@@ -198,6 +202,7 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].guardNumMin);
                             console.log(self.jsonAll[y].json.contents[x].guardNumMax);
                             console.log(self.jsonAll[y].json.contents[x].score);
+                            console.log(self.jsonAll[y].json.contents[x].addTime);
                         case 2:
                             console.log(self.jsonAll[y].json.contents[x].key);
                             console.log(self.jsonAll[y].json.contents[x].type);
@@ -207,6 +212,10 @@ cc.Class({
                             console.log(self.jsonAll[y].json.contents[x].level1);
                             console.log(self.jsonAll[y].json.contents[x].level2);
                             console.log(self.jsonAll[y].json.contents[x].level3);
+                            console.log(self.jsonAll[y].json.contents[x].levelInitExtra);
+                            console.log(self.jsonAll[y].json.contents[x].levelExtra1);
+                            console.log(self.jsonAll[y].json.contents[x].levelExtra2);
+                            console.log(self.jsonAll[y].json.contents[x].levelExtra3);
                             console.log(self.jsonAll[y].json.contents[x].levelPrice1);
                             console.log(self.jsonAll[y].json.contents[x].levelPrice2);
                             console.log(self.jsonAll[y].json.contents[x].levelPrice3);
