@@ -50,24 +50,7 @@ cc.Class({
             }
 
             //显示tips + tips内参数值
-            let labTipsEx = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].tips;
-            let labTipsExValue = 0;
-            switch(shopItemShow[2]+1){
-                case 0:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level1;
-                    break;
-                case 1:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level2;
-                    break;
-                case 2:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level3;
-                    break;
-                case 3:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level3;
-                    break;
-            }
-    
-            this.labTips.string = labTipsEx.replace(/x/,labTipsExValue);
+            this.showTips();
         }
 
         //未买
@@ -85,24 +68,7 @@ cc.Class({
             }
 
             //显示tips + tips内参数值
-            let labTipsEx = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].tips;
-            let labTipsExValue = 0;
-            switch(shopItemShow[2]){
-                case 0:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level1;
-                    break;
-                case 1:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level2;
-                    break;
-                case 2:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level3;
-                    break;
-                case 3:
-                    labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[shopItemShow[0]-1].level3;
-                    break;
-            }
-    
-            this.labTips.string = labTipsEx.replace(/x/,labTipsExValue);
+            this.showTips();
         }
 
         //显示按钮是否置灰
@@ -113,6 +79,33 @@ cc.Class({
             this.btnBuy.interactable = true;
         }
 
+    },
+
+    showTips(){
+        let labTipsEx = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].tips;
+        let labTipsExValue = 0;
+        let labTipsExValue2 = 0;
+        switch(this.shopItemShow[2]){
+            case 0:
+                labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].level1;
+                labTipsExValue2 = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].levelExtra1;
+                break;
+            case 1:
+                labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].level2;
+                labTipsExValue2 = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].levelExtra2;
+                break;
+            case 2:
+                labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].level3;
+                labTipsExValue2 = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].levelExtra3;
+                break;
+            case 3:
+                labTipsExValue = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].level3;
+                labTipsExValue2 = this.gameCtl.gameModel.jsonAll[2].json.contents[this.shopItemShow[0]-1].levelExtra3;
+                break;
+        }
+
+        this.labTips.string = labTipsEx.replace(/x/,labTipsExValue);
+        this.labTips.string = this.labTips.string.replace(/y/,labTipsExValue2);
     },
 
     close(){

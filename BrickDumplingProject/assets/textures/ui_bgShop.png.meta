@@ -1,6 +1,6 @@
 {
   "ver": "2.2.0",
-  "uuid": "869f8653-465d-4ce5-8844-fb7d0602000a",
+  "uuid": "1fb08f3e-f0dd-49cb-9cb8-53f57f51117f",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -8,8 +8,8 @@
   "subMetas": {
     "ui_bgShop": {
       "ver": "1.0.3",
-      "uuid": "b5911703-2ce4-418b-b046-7bbb64253e36",
-      "rawTextureUuid": "869f8653-465d-4ce5-8844-fb7d0602000a",
+      "uuid": "922fdb4a-1d57-48b3-abc5-a9f3e2612eb4",
+      "rawTextureUuid": "1fb08f3e-f0dd-49cb-9cb8-53f57f51117f",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

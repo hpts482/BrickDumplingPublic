@@ -10,6 +10,8 @@ cc.Class({
         soldOutPanel1:cc.Sprite,
         soldOutPanel2:cc.Sprite,
         soldOutPanel3:cc.Sprite,
+        discount:cc.Label,   //商店折扣
+        discountRatio:0.6,    //折扣比例
     },
 
     // use this for initialization
@@ -30,6 +32,7 @@ cc.Class({
     },
 
     show(gameModel){
+        this.node.scale = 0;
         this.node.active = true;
         this.updateGold();
 
@@ -130,14 +133,25 @@ cc.Class({
         let itemRanNum3 = Math.floor(Math.random() * shopItemContents3.length);
         shopItemShow[2] = shopItemContents3[itemRanNum3].concat();
 
+        //生成对应的道具prefab
         for(let ii=0;ii<shopItemShow.length;ii++){
             if(shopItemShow[ii][0]){
-                let shopItemNode = cc.instantiate(this.shopItemPrefab);
-                shopItemNode.parent = this.node.getChildByName('lay_item');
-                shopItemNode.getComponent(cc.Component).init(this.gameCtl,shopItemShow[ii],this,ii);
+                //刷新特价--只有特价位置 && 有升级价格（相当于不为最高级）
+                if(ii == 1){
+                    if(shopItemShow[ii][3]){
+                        shopItemShow[ii][3] = this.updateDiscount(true,shopItemShow[ii][3]);
+                    }
+                    else{
+                        this.updateDiscount(false);
+                    }
+                } 
 
                 //刷新soldOutPanel
                 this.updateSoldOutPanel(ii, shopItemShow[ii][2] == 3);
+
+                let shopItemNode = cc.instantiate(this.shopItemPrefab);
+                shopItemNode.parent = this.node.getChildByName('lay_item');
+                shopItemNode.getComponent(cc.Component).init(this.gameCtl,shopItemShow[ii],this,ii);
             }
         }
 
@@ -209,5 +223,18 @@ cc.Class({
 
     updateGold(){
         this.goldLabel.string = 'x' + this.gameCtl.gameModel.gold;
+    },
+
+    updateDiscount(bool,gold){
+        this.discount.node.active = bool;
+
+        if(bool){
+            if(gold){
+                let goldAfter = Math.floor(gold * this.discountRatio);
+                this.discount.node.getChildByName('lab_specialValue').getComponent(cc.Label).string =String( '折扣 ' + Math.floor((goldAfter/gold)*100) +'%');
+
+                return goldAfter;
+            }
+        }
     },
 });

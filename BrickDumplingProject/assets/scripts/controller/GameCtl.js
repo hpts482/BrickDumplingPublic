@@ -18,6 +18,7 @@ cc.Class({
         cannonPrefab:cc.Prefab,
         parachutePrefab:cc.Prefab,
         CountDownPrefab:cc.Prefab,
+        brickDisappearParticle:cc.Prefab,
 
         powerOnBool:false, // 能量开启的开关
         countDownBool:false, //倒计时时钟开启的开关
@@ -26,6 +27,7 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+
         //安卓返回键退出
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, (event) => {
             if (event.keyCode === cc.KEY.back) {
@@ -50,11 +52,18 @@ cc.Class({
                 this.gameModel.addGold(1000);
             }
         });
-        this.physicsManager = cc.director.getPhysicsManager();
-        this.gameModel = new GameModel();
-        this.audioMgr = new AudioManager();
-        this.startGame();
 
+        //加载子包
+        /*let self = this;
+        cc.loader.downloader.loadSubpackage('subTest', function (err) {
+            //self.startGame();
+            if (err) {
+                return console.error(err);
+            }
+            console.log('load subpackage successfully.');
+        });*/
+
+        this.startGame();
     },
 
     //this.physicsManager.debugDrawFlags =0;
@@ -74,6 +83,15 @@ cc.Class({
         this.physicsManager.enabled = true;
 
         this.gameModel.readJson(this);
+    },
+
+    initLoadDyTexture(){
+        this.gameModel.readDyTextureBrick();
+    },
+
+    initSubpackage(){
+        let self = this;
+        self.initAfter();
     },
 
     initAfter(){
@@ -114,15 +132,26 @@ cc.Class({
 
         //清空子弹
         cc.find("PhysicsLayer/pos_umbrellaBall").removeAllChildren();
+
+        //清空砖块消失特效
+        cc.find("PhysicsLayer/brick_disappearParticleLayout").removeAllChildren();
     },
 
     //是否显示商店
     isShop(){
         if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage - 1].boss) > 0){
-
-            //显示商店界面
-            this.shopPanel.show(this.gameModel);
-            this.audioMgr.PlaySoundClip(this.AudioParam.BallServe);
+            //播放关卡过渡界面到商店界面切换动画
+            let animOverPanelState = this.overPanel.getComponent(cc.Animation).play('resultStart');
+            animOverPanelState.wrapMode = cc.WrapMode.Reverse;
+            this.animOverPanelAniFin = function(){
+                //显示商店界面
+                this.shopPanel.show(this.gameModel);
+                //播放商店出现动画
+                this.shopPanel.getComponent(cc.Animation).play('shopPanelStart');
+                //关闭监控
+                animOverPanelState.off('finished',this.animOverPanelAniFin,this);
+            }
+            animOverPanelState.on('finished',this.animOverPanelAniFin,this);
         }
         else{
             this.initNextStage();
@@ -130,7 +159,10 @@ cc.Class({
     },
 
     //下个关卡初始化
-    initNextStage(){ 
+    initNextStage(){
+        //停止所有计时器
+        this.unscheduleAllCallbacks(); 
+
         //显示分数
         this.gameView.updateScore(this.gameModel.score);
 
@@ -281,6 +313,9 @@ cc.Class({
     },
 
     startGame() {
+        this.physicsManager = cc.director.getPhysicsManager();
+        this.gameModel = new GameModel();
+        this.audioMgr = new AudioManager();
         this.init();
     },
 
@@ -358,21 +393,69 @@ cc.Class({
 
         //进入下一关处理
         else{
-            //关卡加分
-            this.scoreManager.addScoreStage();
+            //播放球到界面的过渡动画---------------------------------------------------------
+            this.ball.isActive(false);
+            
+            //打开图层
+            this.ball.ballStageOver.node.active = true;
+            this.ball.ballStageOverBg.node.active = true;
 
-            //boss加金币
-            if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage-1].boss)){
-                this.gameModel.addGold(Math.floor(this.gameModel.currentMission[1] * this.gameModel.currentMission[2]));
-            }
+            //确认位置并恢复大小
+            this.ball.ballStageOver.node.position = this.ball.node.position;
+            this.ball.ballStageOver.node.scale = 1;
+            this.ball.ballStageOver.node.opacity = 255;
+            this.ball.ballStageOver.node.getChildByName('par').getComponent(cc.ParticleSystem).resetSystem();
 
-            this.overPanel.show(this.gameModel.score, true);
-            this.audioMgr.PlaySoundClip(this.AudioParam.PanelWin);
+            //确认回调
+            let seqFinished = cc.callFunc(function() {
+                //关卡加分
+                this.scoreManager.addScoreStage();
+
+                //boss加金币
+                if(Number(this.gameModel.jsonAll[1].json.contents[this.gameModel.currentStage-1].boss)){
+                    this.gameModel.addGold(Math.floor(this.gameModel.currentMission[1] * this.gameModel.currentMission[2]));
+                }
+
+                //关闭背景图
+                this.ball.ballStageOverBg.node.active = false;
+                
+                this.overPanel.show(this.gameModel.score, true);
+                this.audioMgr.PlaySoundClip(this.AudioParam.PanelWin);
+            }, this);
+
+            //顺序播放动画
+            let seq = cc.sequence(
+                cc.moveBy(0.8,cc.v2(0,100)).easing(cc.easeElasticOut(3)),
+                cc.scaleTo(0.1,1.2,0.9),
+                cc.scaleTo(0.1,0.9,1.1),
+                cc.scaleTo(0.05,1),
+                cc.spawn(
+                    cc.rotateBy(0.4,1080).easing(cc.easeElasticIn(3)),
+                    cc.sequence(
+                        cc.delayTime(0.1),
+                        cc.moveBy(0.2,cc.v2(0,10)).easing(cc.easeElasticOut(3)),
+                        cc.spawn(
+                            cc.moveBy(0.6,cc.v2(0,-100)).easing(cc.easeElasticOut(3)),
+                            cc.scaleTo(0.3,0),
+                        ),
+
+                    ),
+                ),
+                seqFinished,
+            );
+
+            //播放动画
+            this.ball.ballStageOver.node.runAction(seq);
+            //播放球到界面的过渡动画逻辑完毕---------------------------------------------------------
         }
 
     },
 
     onBallContactBrick(ballNode, brickNode) {
+        //受击变白
+        brickNode.getComponent(cc.Component).flashWhite();
+
+        //减防
         this.brickMinusStr(brickNode,1);
 
         //增加能量
@@ -389,10 +472,11 @@ cc.Class({
     brickMinusStr(brickNode,n){
         let brickStr = brickNode.getComponent(cc.Component).minusStr(n);
 
-        //砖块减强度&加分
-        if(brickStr<=0){
-            brickNode.parent = null;
-            brickNode.destroy();
+        //砖块减强度&加分&判胜负
+        if(brickStr<=0 && brickNode.parent && !brickNode.getComponent(cc.Component).boolDestroy){
+            //砖块消失动画(砖块删除在播放之后)
+            brickNode.getComponent(cc.Component).actDisappear();
+
             this.scoreManager.addScoreBrick();
             this.gameModel.minusBrick(1);
             this.gameView.updateScore(this.gameModel.score);
@@ -400,7 +484,7 @@ cc.Class({
             //执行关卡胜利判断
             this.isMissionCompleted(brickNode);
         }
-        else{
+        else if(brickStr>0){
             brickNode.getComponent(cc.Component).updateStr();
         }
     },
@@ -450,18 +534,23 @@ cc.Class({
     },
 
     onBallContactParachute(ballNode, brickNode) {
-        let posParachuteWorld = cc.v2(0,0);
-        let posParachuteLocal = cc.v2(0,0);
-        //本地转世界
-        posParachuteWorld = brickNode.getChildByName('box').convertToWorldSpace(cc.v2(0,0));
-        //世界转本地
-        posParachuteLocal = this.brickLayout.node.convertToNodeSpaceAR(posParachuteWorld);
-        //生成道具
-        this.instItem(posParachuteLocal);
-        //确认是否有团子
-        brickNode.getComponent(cc.Component).isDumpling(posParachuteWorld);
-        brickNode.destroy();
-        this.audioMgr.PlaySoundClip(this.AudioParam.BallHitWall);
+        if(brickNode.getComponent(cc.Component).itemBool){
+            //防重
+            brickNode.getComponent(cc.Component).itemBool = false;
+            
+            let posParachuteWorld = cc.v2(0,0);
+            let posParachuteLocal = cc.v2(0,0);
+            //本地转世界
+            posParachuteWorld = brickNode.getChildByName('box').convertToWorldSpace(cc.v2(0,0));
+            //世界转本地
+            posParachuteLocal = this.brickLayout.node.convertToNodeSpaceAR(posParachuteWorld);
+            //生成道具
+            this.instItem(posParachuteLocal);
+            //确认是否有团子
+            brickNode.getComponent(cc.Component).isDumpling(posParachuteWorld);
+            brickNode.destroy();
+            this.audioMgr.PlaySoundClip(this.AudioParam.BallHitWall);
+        }
     },
 
     onBallContactCountDown(ballNode, brickNode) {
@@ -636,6 +725,11 @@ cc.Class({
 
     //技能球开放
     powerOn(){
+        //播放技能球激活效果
+        if(this.powerOnBool){
+            this.ball.animProgressSkillStart();
+        }
+        //释放技能
         switch (this.ball.progressSkillNum) {
             case 1:
                 //强力球
@@ -650,7 +744,6 @@ cc.Class({
                 this.ball.powerBallBomb(this.powerOnBool);
                 break;
         }
-
         //进度条变色
         switch(this.powerOnBool){
             case true:
@@ -660,7 +753,6 @@ cc.Class({
                 this.gameView.colPower(cc.Color.WHITE);
                 break;
         }
-        
     },
 
     //闪电技能
@@ -701,7 +793,7 @@ cc.Class({
         }
 
         //第一个点还存在的话-额外伤害
-        if(brickNode.isVaild){
+        if(brickNode.isValid){
             this.brickMinusStr(brickNode,thunderStrength);
         }
 
@@ -712,28 +804,33 @@ cc.Class({
         let lastPosition = this.thunderTarge[0].position;
 
         this.progressSkillThunderStart = function(){
-            //找点
-            this.progressSkillThunderFoundPoint(this.thunderTarge);
-            //证明下一个点已被找到
-            if(this.thunderTarge.length>this.thunderTargeI+1){
-                //画线
-                let thunderNode = cc.instantiate(this.ball.progressSkillThunderShow);
-                thunderNode.parent = cc.find('PhysicsLayer/brick_layout/progressSkillThunderLayout');
-                thunderNode.getComponent(cc.Component).init(this,lastPosition,this.thunderTarge[this.thunderTargeI+1].position);
-                //下一个点的位置换为起点
-                lastPosition = this.thunderTarge[this.thunderTargeI+1].position;
-                //对下个点造成伤害
-                this.brickMinusStr(this.thunderTarge[this.thunderTargeI+1],thunderStrength);        
-                //增加comb
-                this.onComb(true);
+            if(this.physicsManager.enabled){
+                //找点
+                this.progressSkillThunderFoundPoint(this.thunderTarge);
+                //证明下一个点已被找到
+                if(this.thunderTarge.length>this.thunderTargeI+1){
+                    //画线
+                    let thunderNode = cc.instantiate(this.ball.progressSkillThunderShow);
+                    thunderNode.parent = cc.find('PhysicsLayer/brick_layout/progressSkillThunderLayout');
+                    thunderNode.getComponent(cc.Component).init(this,lastPosition,this.thunderTarge[this.thunderTargeI+1].position);
+                    //下一个点的位置换为起点
+                    lastPosition = this.thunderTarge[this.thunderTargeI+1].position;
+                    //对下个点造成伤害
+                    this.brickMinusStr(this.thunderTarge[this.thunderTargeI+1],thunderStrength);        
+                    //增加comb
+                    this.onComb(true);
+                }
+                if(this.thunderTargeI>=thunderNum-1){
+                    //停止循环
+                    this.unschedule(this.progressSkillThunderStart);
+
+                    //闪电完毕，打开开关
+                    this.scheduleOnce(function() {
+                        this.ball.thunderOn = true;
+                    }, 1);
+                }
+                this.thunderTargeI++;
             }
-            if(this.thunderTargeI>=thunderNum){
-                //闪电完毕，打开开关
-                this.ball.thunderOn = true;
-                //停止循环
-                this.unschedule(this.progressSkillThunderStart);
-            }
-            this.thunderTargeI++;
         }
         this.progressSkillThunderStart();
         this.schedule(this.progressSkillThunderStart,1);
@@ -750,7 +847,7 @@ cc.Class({
         //排重
         for(let i=0;i<thunderTargetPool.length;i++){
             for(let j=0;j<thunderTarge.length;j++){
-                if(thunderTarge[j].isVaild){
+                if(thunderTarge[j].isValid){
                     if(thunderTargetPool[i].x == thunderTarge[j].x && thunderTargetPool[i].y == thunderTarge[j].y){
                         thunderTargetPool.splice(i,1);
                         i--;
@@ -767,8 +864,63 @@ cc.Class({
         }
     },
 
+    //爆炸技能
+    progressSkillBomb(ballNode, brickNode) {
+        //关闭爆炸开关
+        this.ball.bombOn = false;
+        this.ball.ballBombOnAnim(false);
 
+        //获取爆炸间隔和范围
+        let bombCdRatio = 0;
+        let bombExtent = 0;
+        switch(this.gameModel.itemLevel[13]){
+            case 0:
+                bombCdRatio = Number(this.gameModel.jsonAll[2].json.contents[13].levelInit);
+                break;
+            case 1:
+                bombCdRatio = Number(this.gameModel.jsonAll[2].json.contents[13].level1);
+                break;
+            case 2:
+                bombCdRatio = Number(this.gameModel.jsonAll[2].json.contents[13].level2);
+                break;
+            case 3:
+                bombCdRatio = Number(this.gameModel.jsonAll[2].json.contents[13].level3);
+                break;
+        }
+        switch(this.gameModel.itemLevel[13]){
+            case 0:
+                bombExtent = Number(this.gameModel.jsonAll[2].json.contents[13].levelInitExtra);
+                break;
+            case 1:
+                bombExtent = Number(this.gameModel.jsonAll[2].json.contents[13].levelExtra1);
+                break;
+            case 2:
+                bombExtent = Number(this.gameModel.jsonAll[2].json.contents[13].levelExtra2);
+                break;
+            case 3:
+                bombExtent = Number(this.gameModel.jsonAll[2].json.contents[13].levelExtra3);
+                break;
+        }
 
+        //爆炸逻辑
+        let bombNode = cc.instantiate(this.ball.progressSkillBombShow);
+        bombNode.parent = cc.find('PhysicsLayer/brick_layout/progressSkillBombLayout');
+        bombNode.getComponent(cc.Component).init(this,brickNode.position,bombCdRatio,bombExtent);
+
+        //爆炸CD
+        this.bombCd = function(){
+            if(this.powerOnBool){
+                this.ball.bombOn = true;
+                this.ball.ballBombOnAnim(true);
+            }
+        }
+        this.scheduleOnce(this.bombCd, Math.floor((100-bombCdRatio) * 0.05));
+    },
+
+    //巨大技能
+    progressSkillBig(ballNode, brickNode) {
+        this.brickMinusStr(brickNode,this.ball.bigStrength);
+    },
 
     //开启boss技能
     onBrickBossSkill(brickNode){
@@ -784,17 +936,18 @@ cc.Class({
 
     //boss技能列表
     brickBossSkill(brickNode,skillNum,skillStrength){
+        //skillNum = 5; //测试技能
         switch(skillNum){
-            //1、暂时加速。2、随机位置生成砖块。3、强化前锋。4、减能量。5、生成可移动前锋。6、砖块雨。7、生成底排屏障。8、反向反弹。9、增加所有砖块护甲
+            //1、暂时加速。2、随机位置生成砖块。3、强化前锋。4、生成可移动前锋。5、砖块雨。6、生成底排屏障。7、反向反弹。8、增加所有砖块护甲。9、隐身球
             case 1:
                 //开启持续技能开关
                 this.bossSkillOnNum = 1;
                 //赋值加速速度倍率和持续时间
-                let VelocityNum = 1 + skillStrength * 0.1;
-                let VelocityTime = Math.floor (3 + skillStrength * 0.5);
+                let VelocityNum = 1 + skillStrength * 0.2;
+                let VelocityTime = Math.floor (2 + skillStrength * 0.5);
                 console.log('**********开始brickBossSkill(ctrl)*************开关：'+this.bossSkillOnNum + '速度：'+ VelocityNum + '持续时间' + VelocityTime);
                 //执行加速
-                this.ball.bossSkillBallQuick(true,VelocityNum);
+                this.ball.bossSkillBallQuick(true,VelocityNum,VelocityTime);
                 //持续时间后自动恢复
                 this.funBossSkillBallQuick = function(){
                     this.ball.bossSkillBallQuick(false);
@@ -802,7 +955,7 @@ cc.Class({
                 this.scheduleOnce(this.funBossSkillBallQuick,VelocityTime);
                 break;
             case 2:
-                this.brickLayout.bossSkillInstRanBrick(skillStrength);
+                this.brickLayout.bossSkillInstRanBrick(skillStrength+1);
                 this.brickBossSkillFin();
                 break;
             case 3:
@@ -815,12 +968,22 @@ cc.Class({
                 this.brickBossSkillFin();
                 break;
             case 4:
+                //强度和速度
+                this.brickLayout.bossSkillInstMoveBrick(skillStrength+1,4);
+                this.brickBossSkillFin();
                 break;
             case 5:
+                //强度和数量
+                this.brickLayout.bossSkillInstBrickRain(skillStrength,skillStrength+6);
+                this.brickBossSkillFin();
                 break;
             case 6:
                 break;
             case 7:
+                break;
+            case 8:
+                break;
+            case 9:
                 break;
         }
     },
@@ -851,6 +1014,18 @@ cc.Class({
             }
             this.gameModel.zeroCombNum();
         }
+    },
+
+    //能量进度条显示
+    progressSkillBar(progressSkillNum){
+        this.gameView.updateProgress(progressSkillNum);
+    },
+
+    //砖块destroy触发效果
+    instBrickParticleDisappear(pos){
+        let brickDisPar = cc.instantiate(this.brickDisappearParticle);
+        brickDisPar.parent = cc.find('PhysicsLayer/brick_disappearParticleLayout');
+        brickDisPar.position = pos;
     },
     
     onDestroy() {

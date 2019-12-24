@@ -10,6 +10,7 @@ cc.Class({
     init(gameCtl,num) {
         this.gameCtl = gameCtl;
         this.num = num;
+        this.itemBool = true;
 
         //显示字
         switch (this.num) {

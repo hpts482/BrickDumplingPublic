@@ -225,9 +225,57 @@ cc.Class({
                 }
             }*/
 
-            self.gameCtrl.initAfter();
+            self.gameCtrl.initLoadDyTexture();
         });
     },
+
+    readDyTextureBrick(){
+        //预加载相关资源
+        let self = this;
+        let url = String('dyTexture/brick');
+        
+        cc.loader.loadResDir(url,cc.SpriteFrame,function(err,obj){
+            if(err){
+                console.log(err);
+                return;
+            }
+            //二维数组声明：1
+            self.spriteBrickArray = new Array();
+
+            for(let i=0;i<obj.length;i++){
+                //二维数组声明：2
+                if((i%6) == 0){
+                    self.spriteBrickArray[Math.floor(i/6)] = new Array();
+                }
+                self.spriteBrickArray[Math.floor(i/6)][i%6] = obj[i];
+            }
+
+            self.readDyTextureBrickBoss();
+        });
+    },
+
+    readDyTextureBrickBoss(){
+        //预加载相关资源
+        let self = this;
+        let url = String('dyTexture/brickBossEmoji');
+        
+        cc.loader.loadResDir(url,cc.SpriteFrame,function(err,obj){
+            if(err){
+                console.log(err);
+                return;
+            }
+            //数组声明
+            self.spriteBrickBossArray = new Array();
+
+            for(let i=0;i<obj.length;i++){
+                self.spriteBrickBossArray[i] = obj[i];
+            }
+
+            self.gameCtrl.initSubpackage();
+        });
+    },
+
+
     /*readJsonStageLevel(){
         let self = this;
 

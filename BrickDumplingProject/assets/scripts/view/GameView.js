@@ -13,6 +13,12 @@ cc.Class({
         powerProgressTex:cc.ProgressBar,
         restartBallLabel:cc.Label,
         initBool:false,
+
+        powerSkillSprite:cc.Sprite,
+        powerSkillSpriteBig:cc.SpriteFrame,
+        powerSkillSpriteThunder:cc.SpriteFrame,
+        powerSkillSpriteBomb:cc.SpriteFrame,
+
     },
 
     init(gameCtl,gameModel){
@@ -88,6 +94,25 @@ cc.Class({
             let str ='消灭 Boss'
             this.missionLabel.string = str;   
         }
+    },
+
+    //更新能量进度条显示
+    updateProgress(progressSkillNum){
+        switch (progressSkillNum) {
+            case 1:
+                this.powerSkillSprite.getComponent(cc.Sprite).spriteFrame = this.powerSkillSpriteBig;
+                break;
+            case 2:
+                this.powerSkillSprite.getComponent(cc.Sprite).spriteFrame = this.powerSkillSpriteThunder;
+                break;
+            case 3:
+                this.powerSkillSprite.getComponent(cc.Sprite).spriteFrame = this.powerSkillSpriteBomb;
+                break;
+            default:
+                break;
+        }
+        //播放动画
+        this.powerSkillSprite.getComponent(cc.Animation).play('progressSkillBar');
     },
 
     colPower(color){

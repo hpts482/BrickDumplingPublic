@@ -26,48 +26,30 @@ cc.Class({
         let brickEmojiNum = Math.floor((this.strength - 1) / 6) + 1;
         let brickSprNum = ((this.strength - 1) % 6) + 1;
 
-        //显示砖块
-        let urlSpr = String('dyTexture/brick/brickBoss_'+brickSprNum);
-        //加载资源
-        cc.loader.loadRes(urlSpr,function(err,obj){
-            if(err){
-                console.log(err);
-                return;
-            }
+        //显示砖块，资源已经在model加载完毕
+        let obj = this.gameCtl.gameModel.spriteBrickArray[0][brickSprNum-1];
+        this.updataStrSpr(obj);
 
-            self.updataStrSpr(obj);
-        });
-
-        //显示表情，表情非0执行
+        //显示表情，表情非0执行,资源已经在model加载完毕
         if(brickEmojiNum){
-            this.node.getChildByName('spr_emoji').active = true;
-            let urlEmoji = String('dyTexture/brick/brickEmoji_'+brickEmojiNum);
-            //加载资源
-            cc.loader.loadRes(urlEmoji,function(err,obj){
-                if(err){
-                    console.log(err);
-                    return;
-                }
-                self.updataEmojiSpr(obj);
-            });
+            let objBoss = this.gameCtl.gameModel.spriteBrickBossArray[brickEmojiNum-1];
+            this.updataEmojiSpr(objBoss);
         }
     },
 
     updataStrSpr(obj){
-        this.brickSprite = new cc.SpriteFrame(obj);
-        this.node.getComponent(cc.Sprite).spriteFrame = this.brickSprite;
+        this.node.getComponent(cc.Sprite).spriteFrame = obj;
     },
 
-    updataEmojiSpr(obj){
-        this.brickSprite = new cc.SpriteFrame(obj);
-        this.node.getChildByName('spr_emoji').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
+    updataEmojiSpr(objBoss){
+        this.node.getChildByName('spr_emoji').getComponent(cc.Sprite).spriteFrame = objBoss;
     },
 
     //开始技能
     onSkill(){
         //确定技能
-        //this.skillNum = Math.floor(Math.random()*this.bossSkillNum + 1);
-        this.skillNum = Math.floor(Math.random()*3 + 1);
+        this.skillNum = Math.floor(Math.random()*this.bossSkillNum + 1);
+        //this.skillNum = Math.floor(Math.random()*3 + 1);
         //this.skillNum = 3;
 
         //确定技能强度
@@ -109,7 +91,7 @@ cc.Class({
         this.scheduleOnce(function() {
             this.loopNum++;
             this.skillLoop();
-        }, Math.floor(6-this.bossSkillStrength/3));
+        }, Math.floor(3-this.bossSkillStrength/3));
     },
 
     skillPrepare(){
@@ -133,7 +115,7 @@ cc.Class({
                     this.skillLoop();
                 }, Math.floor(1));
             }, Math.floor(3-this.skillStrength/3));
-        }, Math.floor(4-this.skillStrength/3));
+        }, Math.floor(3-this.skillStrength/3));
 
         /*
         //打开准备粒子
@@ -174,6 +156,45 @@ cc.Class({
         //释放技能
         this.loopNum++;
         this.gameCtl.brickBossSkill(this,this.skillNum,this.skillStrength);
+    },
+
+    //受击变白
+    flashWhite(){
+        //显示触碰的白化效果
+        let act = cc.sequence(
+            cc.fadeTo(0.05,150),
+            cc.fadeOut(0.1),
+        )
+        this.node.getChildByName('white').runAction(act);
+    },
+
+    actDisappear(){
+        //确认结束回调
+        let seqFinished = cc.callFunc(function() {
+            //删除砖块
+            this.destroyPre();
+        }, this);
+
+        //确认特效回调
+        let seqParticle = cc.callFunc(function() {
+            //生成砖块消失特效
+            this.gameCtl.instBrickParticleDisappear(this.node.position);
+        }, this);
+
+        //变大、变小、播放特效
+        let act = cc.sequence(
+            seqParticle,
+            cc.scaleTo(0.1,1.1,1.1).easing(cc.easeElasticOut(3)),
+            cc.scaleTo(0.2,0,0).easing(cc.easeElasticOut(3)),
+            seqFinished,
+        )
+        this.node.runAction(act);
+    },
+
+    //删除节点准备
+    destroyPre(){
+        this.node.parent = null;
+        this.node.destroy();
     },
 
     onDestroy(){

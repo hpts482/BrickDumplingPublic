@@ -62,6 +62,14 @@ cc.Class({
         this.updateSpr();
     },
 
+    update(){
+        //防止未删除
+        if(this.node.y<-2000){
+            this.node.parent = null;
+            this.node.destroy();
+        }
+    },
+
     updateSpr(){
         let self = this;
         let url = String('dyTexture/item/item_'+self.type);

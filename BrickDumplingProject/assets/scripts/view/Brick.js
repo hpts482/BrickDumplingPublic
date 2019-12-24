@@ -5,6 +5,8 @@ cc.Class({
         brickSprite:cc.spriteFrame,
         strength:0,
         spriteType:0, //砖块形状
+
+        boolDestroy:false, //确定是否进入删除状态
     },
 
     init(gameCtl,type){
@@ -67,8 +69,7 @@ cc.Class({
     },
 
     onDestroy(){
-        console.log('砖块删除！')
-        //1~10随机
+        //随机掉落道具：1~10随机
         let ranNum = Math.floor(Math.random()*10+1);
 
         //80%概率获得道具
@@ -96,45 +97,19 @@ cc.Class({
     },
 
     updateStr(){
-        let self = this;
-        let url = String('dyTexture/brick/brick_' + this.spriteType + this.strength);
+        //资源已经在model加载完毕
+        let obj = this.gameCtl.gameModel.spriteBrickArray[this.spriteType][this.strength-1];
+        this.updataStrSpr(obj);
 
-        //console.log('Wall url :'+url);
-
-        //加载资源
-        cc.loader.loadRes(url,function(err,obj){
-            if(err || !self.node.isValid ){
-                console.log(err);
-                return;
-            }
-            else{
-                self.updataStrSpr(obj);
-            }
-        });
     },
 
     updataStrSpr(obj){
-        this.brickSprite = new cc.SpriteFrame(obj);
-        switch(this.spriteType){
-            case 1:
-                this.node.getChildByName('brick1').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-            case 2:
-                this.node.getChildByName('brick2').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-            case 3:
-                this.node.getChildByName('brick3').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-            case 4:
-                this.node.getChildByName('brick4').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-            case 5:
-                this.node.getChildByName('brick5').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-            case 6:
-                this.node.getChildByName('brick6').getComponent(cc.Sprite).spriteFrame = this.brickSprite;
-                break;
-        }
+        this.brickSprite = obj;
+
+        //找到对应的砖块并赋值图片
+        this.brickTypeString = String('brick' + this.spriteType);
+        this.node.getChildByName(this.brickTypeString).getComponent(cc.Sprite).spriteFrame = this.brickSprite;
+
     },
 
     updataRigidPositon(){
@@ -151,7 +126,44 @@ cc.Class({
         this.node.getChildByName('ani_skill').getComponent(cc.Animation).play('bossSkillStart');
     },
 
+    //受击变白
+    flashWhite(){
+        //显示触碰的白化效果
+        let act = cc.sequence(
+            cc.fadeTo(0.05,150),
+            cc.fadeOut(0.1),
+        )
+        this.node.getChildByName(this.brickTypeString).getChildByName('white').runAction(act);
+    },
 
+    actDisappear(){
+        this.boolDestroy = true; //确认已开始删除
 
+        //确认结束回调
+        let seqFinished = cc.callFunc(function() {
+            //删除砖块
+            this.destroyPre();
+        }, this);
 
+        //确认特效回调
+        let seqParticle = cc.callFunc(function() {
+            //生成砖块消失特效
+            this.gameCtl.instBrickParticleDisappear(this.node.position);
+        }, this);
+
+        //变大、变小、播放特效
+        let act = cc.sequence(
+            seqParticle,
+            cc.scaleTo(0.1,1.1,1.1).easing(cc.easeElasticOut(3)),
+            cc.scaleTo(0.2,0,0).easing(cc.easeElasticOut(3)),
+            seqFinished,
+        )
+        this.node.getChildByName(this.brickTypeString).runAction(act);
+    },
+
+    //删除节点准备
+    destroyPre(){
+        this.node.parent = null;
+        this.node.destroy();
+    },
 });
