@@ -18,6 +18,10 @@ cc.Class({
         combNum:0,//连打次数
 
         timeCountDown:0,//倒计时状态需要时间
+
+        brickStrColor:[cc.Color],    //砖块强度颜色
+        brickBossStrColor:[cc.Color],//BOSS砖块强度颜色
+
     },
 
     init(){
@@ -38,6 +42,10 @@ cc.Class({
         for(let i=0; i < Number(this.jsonAll[2].json.total); i++){
             this.itemLevel[i] = 0;
         }
+
+        //初始化普通砖块强度的颜色
+        this.brickStrColor = [new cc.Color(188,239,188),new cc.Color(188,239,239),new cc.Color(188,188,239),new cc.Color(239,188,239),new cc.Color(239,188,188),new cc.Color(239,239,188)];
+        this.brickBossStrColor = [new cc.Color(201,242,201),new cc.Color(200,241,241),new cc.Color(201,201,242),new cc.Color(240,199,240),new cc.Color(242,201,201),new cc.Color(242,242,201)];
 
     },
 
@@ -232,13 +240,32 @@ cc.Class({
     readDyTextureBrick(){
         //预加载相关资源
         let self = this;
-        let url = String('dyTexture/brick');
+        let url = ['dyTexture/brick/brick_10','dyTexture/brick/brick_20','dyTexture/brick/brick_30','dyTexture/brick/brick_40','dyTexture/brick/brick_50','dyTexture/brick/brick_60','dyTexture/brick/brickBoss_0'];
         
-        cc.loader.loadResDir(url,cc.SpriteFrame,function(err,obj){
+        //读取黑白图
+        cc.loader.loadResArray(url,cc.SpriteFrame,function(err,obj){
             if(err){
                 console.log(err);
                 return;
             }
+
+            self.spriteBrickArray = new Array();
+
+            for(let i=0;i<obj.length;i++){
+                self.spriteBrickArray[i] = obj[i];
+            }
+
+            console.log(self.spriteBrickArray);
+            self.readDyTextureBrickBoss();
+        });
+
+        /*读取整个文件夹（原来不用叠色的处理方式）
+            cc.loader.loadResDir(url,cc.SpriteFrame,function(err,obj){
+            if(err){
+                console.log(err);
+                return;
+            }
+            //注意：打包之后的obj数据顺序是有问题的！！！需要进行排序才能正确使用！！
             //二维数组声明：1
             self.spriteBrickArray = new Array();
 
@@ -250,16 +277,17 @@ cc.Class({
                 self.spriteBrickArray[Math.floor(i/6)][i%6] = obj[i];
             }
 
+            console.log(self.spriteBrickArray);
             self.readDyTextureBrickBoss();
-        });
+        });*/
     },
 
     readDyTextureBrickBoss(){
         //预加载相关资源
         let self = this;
-        let url = String('dyTexture/brickBossEmoji');
+        let url = ['dyTexture/brickBossEmoji/brickEmoji_1','dyTexture/brickBossEmoji/brickEmoji_2','dyTexture/brickBossEmoji/brickEmoji_3','dyTexture/brickBossEmoji/brickEmoji_4','dyTexture/brickBossEmoji/brickEmoji_5'];
         
-        cc.loader.loadResDir(url,cc.SpriteFrame,function(err,obj){
+        cc.loader.loadResArray(url,cc.SpriteFrame,function(err,obj){
             if(err){
                 console.log(err);
                 return;
@@ -271,6 +299,7 @@ cc.Class({
                 self.spriteBrickBossArray[i] = obj[i];
             }
 
+            console.log(self.spriteBrickBossArray);
             self.gameCtrl.initSubpackage();
         });
     },

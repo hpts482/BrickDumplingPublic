@@ -27,8 +27,9 @@ cc.Class({
         let brickSprNum = ((this.strength - 1) % 6) + 1;
 
         //显示砖块，资源已经在model加载完毕
-        let obj = this.gameCtl.gameModel.spriteBrickArray[0][brickSprNum-1];
-        this.updataStrSpr(obj);
+        let obj = this.gameCtl.gameModel.spriteBrickArray[this.gameCtl.gameModel.spriteBrickArray.length-1];
+        let objColor = this.gameCtl.gameModel.brickBossStrColor[brickSprNum-1];
+        this.updataStrSpr(obj,objColor);
 
         //显示表情，表情非0执行,资源已经在model加载完毕
         if(brickEmojiNum){
@@ -37,8 +38,9 @@ cc.Class({
         }
     },
 
-    updataStrSpr(obj){
+    updataStrSpr(obj,objColor){
         this.node.getComponent(cc.Sprite).spriteFrame = obj;
+        this.node.color = objColor;
     },
 
     updataEmojiSpr(objBoss){

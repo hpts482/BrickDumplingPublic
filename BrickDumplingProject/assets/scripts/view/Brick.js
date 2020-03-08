@@ -98,17 +98,19 @@ cc.Class({
 
     updateStr(){
         //资源已经在model加载完毕
-        let obj = this.gameCtl.gameModel.spriteBrickArray[this.spriteType][this.strength-1];
-        this.updataStrSpr(obj);
+        let obj = this.gameCtl.gameModel.spriteBrickArray[this.spriteType-1];
+        let objColor = this.gameCtl.gameModel.brickStrColor[this.strength-1];
+        this.updataStrSpr(obj,objColor);
 
     },
 
-    updataStrSpr(obj){
+    updataStrSpr(obj,objColor){
         this.brickSprite = obj;
 
-        //找到对应的砖块并赋值图片
+        //找到对应的砖块并赋值图片+颜色
         this.brickTypeString = String('brick' + this.spriteType);
         this.node.getChildByName(this.brickTypeString).getComponent(cc.Sprite).spriteFrame = this.brickSprite;
+        this.node.getChildByName(this.brickTypeString).color = objColor;
 
     },
 
