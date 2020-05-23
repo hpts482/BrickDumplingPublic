@@ -489,6 +489,389 @@ cc.Class({
                         this.brickStrBoss(brickNode,0);
                         }
                     break;
+                //天棚全
+                case 2:
+                    this.isNotBossNum = 20;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-一行
+                        if(i<8){
+                            this.BrickLayoutPos(7,i+1,brickNode);
+                        }
+                        //第二组-左3右3
+                        else if(i>=8 && i<14){
+                            /*this.BrickLayoutPos(8,1,brickNode);
+                            this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,3,brickNode);
+                            this.BrickLayoutPos(8,6,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);
+                            this.BrickLayoutPos(8,8,brickNode);*/
+                            this.BrickLayoutPos(8,Math.floor((i-8)/3)*2+(i-7),brickNode);
+                        }
+                        //第三组-左2右2
+                        else if(i>=14 && i<18){
+                            /*this.BrickLayoutPos(9,1,brickNode);
+                            this.BrickLayoutPos(9,2,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);
+                            this.BrickLayoutPos(9,8,brickNode);*/
+                            this.BrickLayoutPos(9,Math.floor((i-14)/2)*4+(i-13),brickNode);
+                        }
+                        //第四组-左1右1
+                        else if(i>=18){
+                            /*this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);*/
+                            this.BrickLayoutPos(10,(i-18)*7+1,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //飞碟
+                case 3:
+                    this.isNotBossNum = 22;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-一行
+                        if(i<8){
+                            this.BrickLayoutPos(7,i+1,brickNode);
+                        }
+                        //第二组-左2右2
+                        else if(i>=8 && i<12){
+                            /*this.BrickLayoutPos(8,1,brickNode);
+                            this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);
+                            this.BrickLayoutPos(8,8,brickNode);*/
+                            this.BrickLayoutPos(8,Math.floor((i-8)/2)*4+(i-7),brickNode);
+                        }
+                        //第三组-左一三位右一三位
+                        else if(i>=12 && i<16){
+                            /*this.BrickLayoutPos(9,1,brickNode);
+                            this.BrickLayoutPos(9,3,brickNode);
+                            this.BrickLayoutPos(9,6,brickNode);
+                            this.BrickLayoutPos(9,8,brickNode);*/
+                            this.BrickLayoutPos(9,Math.floor((i-12)/2)+(i-12)*2+1,brickNode);
+                        }
+                        //第四组-下一行
+                        else if(i>=16){
+                            this.BrickLayoutPos(10,i-14,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //舰艇
+                case 4:
+                    this.isNotBossNum = 20;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-左右一竖
+                        if(i<8){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);  
+                            this.BrickLayoutPos(8,1,brickNode);
+                            this.BrickLayoutPos(8,8,brickNode);
+                            this.BrickLayoutPos(9,1,brickNode);
+                            this.BrickLayoutPos(9,8,brickNode);                            
+                            this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/2)+7,(i%2)*7+1,brickNode);
+                        }
+                        //第二组-左中方右中方
+                        else if(i>=8 && i<16){
+                            /*this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,3,brickNode);  
+                            this.BrickLayoutPos(8,6,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);
+                            this.BrickLayoutPos(9,2,brickNode);
+                            this.BrickLayoutPos(9,3,brickNode);                            
+                            this.BrickLayoutPos(9,6,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-8)/4)+8,((i-8)%4)+2+Math.floor(((i-8)%4)/2)*2,brickNode);
+                        }
+                        //第三组-左一三位右一三位
+                        else if(i>=16){
+                            /*this.BrickLayoutPos(7,4,brickNode);
+                            this.BrickLayoutPos(7,5,brickNode);
+                            this.BrickLayoutPos(10,4,brickNode);
+                            this.BrickLayoutPos(10,5,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-16)/2)*3+7,((i-16)%2)+4,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //左右乾卦下加一行
+                case 5:
+                    this.isNotBossNum = 24;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-两行阴爻
+                        if(i<8){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(7,3,brickNode);  
+                            this.BrickLayoutPos(7,6,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);
+                            this.BrickLayoutPos(8,1,brickNode);
+                            this.BrickLayoutPos(8,3,brickNode);                            
+                            this.BrickLayoutPos(8,6,brickNode);
+                            this.BrickLayoutPos(8,8,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/4)+7,(i%4)*2+1+Math.floor((i%4)/2),brickNode);
+                        }
+                        //第二组-两行阳爻
+                        else if(i>=8 && i<20){
+                            /*this.BrickLayoutPos(9,1,brickNode);
+                            this.BrickLayoutPos(9,2,brickNode);  
+                            this.BrickLayoutPos(9,3,brickNode);
+                            this.BrickLayoutPos(9,6,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);
+                            this.BrickLayoutPos(9,8,brickNode);                            
+                            this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,2,brickNode);...*/
+                            this.BrickLayoutPos(Math.floor((i-8)/6)+9,((i-8)%6)+1+Math.floor(((i-8)%6)/3)*2,brickNode);
+                        }
+                        //第三组-新增
+                        else if(i>=20){
+                            /*this.BrickLayoutPos(7,2,brickNode);
+                            this.BrickLayoutPos(7,7,brickNode);  
+                            this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-20)/2)+7,((i-20)%2)*5+2,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //方形缺四点
+                case 6:
+                    this.isNotBossNum = 20;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-中间上下两行
+                        if(i<8){
+                            /*this.BrickLayoutPos(7,3,brickNode);
+                            this.BrickLayoutPos(7,4,brickNode);  
+                            this.BrickLayoutPos(7,5,brickNode);
+                            this.BrickLayoutPos(7,6,brickNode);
+                            this.BrickLayoutPos(10,3,brickNode);
+                            this.BrickLayoutPos(10,4,brickNode);                            
+                            this.BrickLayoutPos(10,5,brickNode);
+                            this.BrickLayoutPos(10,6,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/4)*3+7,Math.floor(i%4)+3,brickNode);
+                        }
+                        //第二组-左右两列
+                        else if(i>=8 && i<16){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(8,1,brickNode);  
+                            this.BrickLayoutPos(9,1,brickNode);
+                            this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);
+                            this.BrickLayoutPos(8,8,brickNode);                            
+                            this.BrickLayoutPos(9,8,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);...*/
+                            this.BrickLayoutPos(Math.floor((i-8)%4)+7,Math.floor((i-8)/4)*7+1,brickNode);
+                        }
+                        //第三组-新增
+                        else if(i>=16){
+                            /*this.BrickLayoutPos(7,2,brickNode);
+                            this.BrickLayoutPos(7,7,brickNode);  
+                            this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-16)/2)+7,((i-16)%2)*5+2,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //对称L
+                case 7:
+                    this.isNotBossNum = 16;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-上三
+                        if(i<6){
+                            /*this.BrickLayoutPos(7,3,brickNode);
+                            this.BrickLayoutPos(7,6,brickNode);  
+                            this.BrickLayoutPos(8,3,brickNode);
+                            this.BrickLayoutPos(8,6,brickNode);
+                            this.BrickLayoutPos(9,3,brickNode);
+                            this.BrickLayoutPos(9,6,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/2)+7,Math.floor(i%2)*3+3,brickNode);
+                        }
+                        //第二组-下六
+                        else if(i>=6 && i<12){
+                            /*this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,2,brickNode);  
+                            this.BrickLayoutPos(10,3,brickNode);
+                            this.BrickLayoutPos(10,6,brickNode);                            
+                            this.BrickLayoutPos(10,7,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);...*/
+                            this.BrickLayoutPos(10,Math.floor((i-6)/3)*2+(i-5),brickNode);
+                        }
+                        //第三组-新增
+                        else if(i>=12){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(7,2,brickNode);  
+                            this.BrickLayoutPos(7,7,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);*/
+                            this.BrickLayoutPos(7,Math.floor((i-12)/2)*4+(i-11),brickNode);
+                        }
+                        
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //八门
+                case 8:
+                    this.isNotBossNum = 16;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-八门
+                        if(i<8){
+                            /*this.BrickLayoutPos(7,3,brickNode);
+                            this.BrickLayoutPos(7,6,brickNode);  
+                            this.BrickLayoutPos(8,3,brickNode);
+                            this.BrickLayoutPos(8,6,brickNode);  
+                            this.BrickLayoutPos(9,3,brickNode);
+                            this.BrickLayoutPos(9,6,brickNode);
+                            this.BrickLayoutPos(10,3,brickNode);
+                            this.BrickLayoutPos(10,6,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/2)+7,Math.floor(i%2)*3+3,brickNode);
+                        }
+                        //新增-八门
+                        if(i>=8){
+                            /*this.BrickLayoutPos(7,2,brickNode);
+                            this.BrickLayoutPos(7,7,brickNode);  
+                            this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);  
+                            this.BrickLayoutPos(9,2,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);
+                            this.BrickLayoutPos(10,2,brickNode);
+                            this.BrickLayoutPos(10,7,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-8)/2)+7,Math.floor((i-8)%2)*5+2,brickNode);
+                        }
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //祸从口出
+                case 9:
+                    this.isNotBossNum = 16;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-中二
+                        if(i<4){
+                            /*this.BrickLayoutPos(7,4,brickNode);
+                            this.BrickLayoutPos(7,5,brickNode);  
+                            this.BrickLayoutPos(10,4,brickNode);
+                            this.BrickLayoutPos(10,5,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/2)*3+7,Math.floor(i%2)+4,brickNode);
+                        }
+                        //第二组-二行
+                        else if(i>=4 && i<8){
+                            /*this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,3,brickNode);                           
+                            this.BrickLayoutPos(8,6,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);...*/
+                            this.BrickLayoutPos(8,Math.floor((i-4)/2)*2+(i-2),brickNode);
+                        }
+                        //第三组-三行
+                        else if(i>=8 && i<12){
+                            /*this.BrickLayoutPos(9,2,brickNode);
+                            this.BrickLayoutPos(9,3,brickNode);                           
+                            this.BrickLayoutPos(9,6,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);...*/
+                            this.BrickLayoutPos(9,Math.floor((i-8)/2)*2+(i-6),brickNode);
+                        }
+                        //新增-四角
+                        else if(i>=12){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);  
+                            this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-12)/2)*3+7,((i-12)%2)*7+1,brickNode);
+                        }
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
+                //屋顶漏水
+                case 10:
+                    this.isNotBossNum = 20;
+                    for (let i = 0; i <this.isNotBossNum; i++) {
+                        let brickNode = cc.instantiate(this.brickPrefab);
+                        brickNode.parent = this.bossLayoutNode;
+                        brickNode.getComponent(cc.Component).init(this.gameCtl,3);
+
+                        //第一组-左右两列
+                        if(i<4){
+                            /*this.BrickLayoutPos(7,1,brickNode);
+                            this.BrickLayoutPos(7,8,brickNode);  
+                            this.BrickLayoutPos(10,1,brickNode);
+                            this.BrickLayoutPos(10,8,brickNode);*/
+                            this.BrickLayoutPos(Math.floor(i/2)*3+7,Math.floor(i%2)*7+1,brickNode);
+                        }
+                        //第二组-左右二两列
+                        else if(i>=4 && i<8){
+                            /*this.BrickLayoutPos(8,2,brickNode);
+                            this.BrickLayoutPos(8,7,brickNode);                           
+                            this.BrickLayoutPos(9,2,brickNode);
+                            this.BrickLayoutPos(9,7,brickNode);...*/
+                            this.BrickLayoutPos(Math.floor((i-4)/2)+8,Math.floor((i-4)%2)*5+2,brickNode);
+                        }
+                        //第三组-上下两行
+                        else if(i>=8 && i<16){
+                            /*this.BrickLayoutPos(7,3,brickNode);
+                            this.BrickLayoutPos(7,4,brickNode);                           
+                            this.BrickLayoutPos(7,5,brickNode);
+                            this.BrickLayoutPos(7,6,brickNode);   
+                            this.BrickLayoutPos(10,3,brickNode);
+                            this.BrickLayoutPos(10,4,brickNode);                         
+                            this.BrickLayoutPos(10,5,brickNode);
+                            this.BrickLayoutPos(10,6,brickNode);...*/
+                            this.BrickLayoutPos(Math.floor((i-8)/4)*3+7,Math.floor((i-8)%4)+3,brickNode);
+                        }
+                        //新增-左右中2
+                        else if(i>=16){
+                            /*this.BrickLayoutPos(7,2,brickNode);
+                            this.BrickLayoutPos(7,7,brickNode);  
+                            this.BrickLayoutPos(10,2,brickNode);
+                            this.BrickLayoutPos(10,7,brickNode);*/
+                            this.BrickLayoutPos(Math.floor((i-16)/2)*3+7,((i-16)%2)*5+2,brickNode);
+                        }
+
+                        brickNode.getComponent(cc.Component).updataRigidPositon();
+                        this.brickStrBoss(brickNode,0);
+                    }
+                    break;
             }
         }
 
